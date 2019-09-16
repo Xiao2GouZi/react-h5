@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.less';
 
 const App: React.FC = () => {
+
+
+  useEffect(() => {
+
+    console.log(process.env.NODE_ENV)
+
+  }, [])
+
+
+
   return (
     <div className="App">
       <header className="App-header">
