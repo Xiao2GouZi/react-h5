@@ -1,0 +1,40 @@
+.ry-icon {
+
+    @hd: 2px;
+    @icon-size-xxs: 15 * @hd;
+    @icon-size-xs: 18 * @hd;
+    @icon-size-sm: 21 * @hd;
+    @icon-size-md: 22 * @hd;       // 导航条上的图标、grid的图标大小
+    @icon-size-lg: 36 * @hd;
+
+
+    fill: currentColor;
+    background-size: cover;
+    font-size: @icon-size-md;
+
+    &-xxs {
+      font-size: @icon-size-xxs;
+    }
+  
+    &-xs {
+      font-size: @icon-size-xs;
+    }
+  
+    &-sm {
+      font-size: @icon-size-sm;
+    }
+  
+    &-md {
+      font-size: @icon-size-md;
+    }
+  
+    &-lg {
+      font-size: @icon-size-lg;
+    }
+  
+    @keyframes cirle-anim {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }

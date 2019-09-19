@@ -17,7 +17,28 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "outDir": "build",
+    "experimentalDecorators":true,
+    "paths": {
+      "@kits": [
+        "./kits"
+      ],
+      "@config": [
+        "./config"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@components": [
+        "./components"
+      ],
+      "@commons": [
+        "./commons"
+      ]
+    }
   },
   "include": [
     "src"

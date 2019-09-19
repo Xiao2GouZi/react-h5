@@ -31,6 +31,9 @@ const postcssNormalize = require('postcss-normalize');
 
 const appPackageJson = require(paths.appPackageJson);
 
+const antdMobileTheme = require('./antd-mobile-theme')
+
+
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -118,20 +121,26 @@ module.exports = function(webpackEnv) {
       },
     ].filter(Boolean);
     if (preProcessor) {
-      loaders.push(
-        {
-          loader: require.resolve('resolve-url-loader'),
-          options: {
-            sourceMap: isEnvProduction && shouldUseSourceMap,
-          },
+      const url_loader = {
+        loader: require.resolve('resolve-url-loader'),
+        options: {
+          sourceMap: isEnvProduction && shouldUseSourceMap,
         },
-        {
-          loader: require.resolve(preProcessor),
+      }
+      loaders.push(url_loader)
+      const pre_loader = {
+        loader: require.resolve(preProcessor),
           options: {
             sourceMap: true,
           },
-        }
-      );
+      }
+      if (preProcessor === "less-loader") {
+        pre_loader.options.modifyVars = antdMobileTheme
+        pre_loader.options.javascriptEnabled = true
+      }
+
+      loaders.push(pre_loader)
+
     }
     return loaders;
   };
@@ -294,6 +303,11 @@ module.exports = function(webpackEnv) {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
+        '@kits': path.resolve(__dirname, '../src/kits'),
+        '@config': path.resolve(__dirname, '../src/config'),
+        '@assets': path.resolve(__dirname, '../src/assets'),
+        '@components': path.resolve(__dirname, '../src/components'),
+        '@commons': path.resolve(__dirname, '../src/commons'),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
@@ -496,6 +510,7 @@ module.exports = function(webpackEnv) {
               // Remove this when webpack adds a warning or an error for this.
               // See https://github.com/webpack/webpack/issues/6571
               sideEffects: true,
+              // include: /node_modules/
             },
             // Adds support for CSS Modules, but using less
             // using the extension .module.scss or .module.less

@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import './App.less';
+import { Button } from '@components'
+
 
 
 const App: React.FC = () => {
@@ -19,6 +21,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
+      <Button>点我</Button>
       <span>app</span>
     </div>
   );
