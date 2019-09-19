@@ -6,6 +6,19 @@ declare namespace NodeJS {
   interface ProcessEnv {
     readonly NODE_ENV: 'development' | 'production' | 'test';
     readonly PUBLIC_URL: string;
+
+    // 是否开启vconsle
+    readonly REACT_APP_V_CONSLO: "true" | "false"
+
+    //环境变量
+    readonly REACT_APP_BUSINESS_ENV: "dev" | "pre" | "pro"
+
+    // 是否在npm run start 自动打开网页
+    readonly REACT_APP_OPEN_BROWSER: "false" | "true"
+
+    //app的入口文件
+    readonly REACT_APP_ENTRY: 'index' | 'index-demo'
+
   }
 }
 
@@ -35,8 +48,8 @@ declare module '*.png' {
 }
 
 declare module '*.webp' {
-    const src: string;
-    export default src;
+  const src: string;
+  export default src;
 }
 
 declare module '*.svg' {

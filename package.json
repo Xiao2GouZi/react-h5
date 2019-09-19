@@ -14,6 +14,7 @@
     "babel-preset-react-app": "^9.0.1",
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
+    "cross-env": "^6.0.0",
     "css-loader": "2.1.1",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
@@ -63,8 +64,9 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "start": "cross-env REACT_APP_ENTRY=index  node scripts/start.js",
+    "start:demo": "cross-env REACT_APP_ENTRY=index-demo  node scripts/start.js",
+    "build": "cross-env SIT=sit&& node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -139,6 +141,7 @@
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.5",
     "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0"
+    "@types/react-dom": "^16.9.0",
+    "vconsole": "^3.3.4"
   }
 }
