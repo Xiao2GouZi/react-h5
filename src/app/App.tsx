@@ -3,6 +3,20 @@ import './App.less';
 import { Button } from '@components'
 
 
+var viewportUnitsBuggyfill = require('viewport-units-buggyfill');
+
+
+// console.log(' ------> ', hacks)
+
+
+// window.addEventListener('viewport-unit-buggyfill-init', function() {
+//   console.log('getting lost in CSSOM');
+// });
+// window.addEventListener('viewport-unit-buggyfill-style', function() {
+//   console.log('updated rules using viewport unit');
+// });
+
+
 
 const App: React.FC = () => {
 
@@ -15,6 +29,8 @@ const App: React.FC = () => {
 
     console.log(process.env)
 
+    viewportUnitsBuggyfill.refresh();
+
   }, [])
 
 
@@ -22,7 +38,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <Button>点我</Button>
-      <span>app</span>
+      <span className='title-name'>app</span>
     </div>
   );
 }

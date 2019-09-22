@@ -65,7 +65,7 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`);
 };
 
-const appEntry = process.env.REACT_APP_ENTRY;
+const appEntry = process.env.REACT_APP_ENTRY || 'index';
 
 
 // config after eject: we're in ./config/
