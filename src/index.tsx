@@ -3,16 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.less';
 import App from './app/App';
 import * as serviceWorker from './serviceWorker';
+import { LoadScript } from '@kits'
 
-var hacks = require('viewport-units-buggyfill/viewport-units-buggyfill.hacks');
-require('viewport-units-buggyfill').init({
-  hacks: hacks
-});
+LoadScript()
 
-if (process.env.NODE_ENV !== 'production' && process.env.REACT_APP_V_CONSLO === 'true' ) {
-    const VConsole  = require('vconsole')  
-    new VConsole()
-}
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

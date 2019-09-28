@@ -3,7 +3,7 @@
  */
 
 import Config from '@config';
-import { urlQuery } from './utils'
+import { Util } from '@kits'
 
 
 interface IRequestCommonParam {
@@ -108,7 +108,7 @@ const Put = <T = any>(param: IRequestCommonParam): Promise<IAsyncResult<T>> => {
  * GET
  */
 const Get = <T = any>(param: IRequestCommonParam): Promise<IAsyncResult<T>> => {
-    const url = param.body ? `${param.url}?${urlQuery(param.body)}` : param.url;
+    const url = param.body ? `${param.url}?${Util.urlQuery(param.body)}` : param.url;
     return common<T>({
         url,
         init: param.init ? param.init : {

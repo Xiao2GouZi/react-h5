@@ -38,3 +38,19 @@ export async function errCaptured<T = any>(asyncFunc: any): Promise<{ res: T, er
 }
 
 
+let globalLastTapTime = 0;
+/**
+ *  解决重复点击
+ * */
+export const preventMoreTap = () => {
+    let globaTime = globalLastTapTime;
+    let time = new Date().getTime();
+    globalLastTapTime = time;
+    return Math.abs(time - globaTime) < 400 && globaTime !== 0
+}
+
+/** 去除空格 */
+export const removeAllSpace = (str: string) => {
+    return str.replace(/\s+/g, "");
+}
+
