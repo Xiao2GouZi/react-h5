@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import './App.less';
-import { Button } from '@components'
+import { Button, LazyComponent } from '@components'
 
 
-var viewportUnitsBuggyfill = require('viewport-units-buggyfill');
+
 
 
 // console.log(' ------> ', hacks)
@@ -29,7 +29,6 @@ const App: React.FC = () => {
 
     console.log(process.env)
 
-    viewportUnitsBuggyfill.refresh();
 
   }, [])
 
@@ -37,8 +36,11 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Button>点我</Button>
+      <LazyComponent>
+        <Button>点我</Button>
+      </LazyComponent>
       <span className='title-name'>app</span>
+
     </div>
   );
 }

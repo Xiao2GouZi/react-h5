@@ -11,7 +11,7 @@ function Suspender({ suspend }: { suspend: boolean }) {
   }
 }
 
-function Preload({ show, children }: { show: boolean, children: React.ReactNode}) {
+function Preload({ show = false, children }: { show?: boolean, children: React.ReactNode}) {
   return (
     <React.Suspense fallback={null}>
       {children}
