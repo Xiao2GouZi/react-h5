@@ -71,7 +71,7 @@ const loadViewportUnitsBuggyFill = () => {
             needLoad = Number(_fVersion) <= 6
         }
     }
-    console.log(' -------> needLoad', needLoad)
+    console.log(' -------> needLoad viewport-units-buggyfill', needLoad)
     if (needLoad) {
         const hacks = require('viewport-units-buggyfill/viewport-units-buggyfill.hacks');
         const viewportUnitsBuggyfill = require('viewport-units-buggyfill');
