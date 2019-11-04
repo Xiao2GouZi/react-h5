@@ -312,6 +312,7 @@ module.exports = function (webpackEnv) {
         '@assets': path.resolve(__dirname, '../src/assets'),
         '@components': path.resolve(__dirname, '../src/components'),
         '@commons': path.resolve(__dirname, '../src/commons'),
+        '@reduxConfig': path.resolve(__dirname, '../src/redux-config'),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding

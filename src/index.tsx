@@ -4,11 +4,19 @@ import './index.less';
 import App from './app/login';
 import * as serviceWorker from './serviceWorker';
 import { LoadScript } from '@kits'
+import { Provider } from "react-redux";
+import { Store } from './redux-config'
+
 
 LoadScript()
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={Store()}>
+        <App />
+    </Provider>,
+    document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

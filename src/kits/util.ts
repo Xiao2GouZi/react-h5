@@ -54,3 +54,38 @@ export const removeAllSpace = (str: string) => {
     return str.replace(/\s+/g, "");
 }
 
+export enum EDataType {
+    String = 'String',
+    Object = 'Object',
+    Array = 'Array',
+    Function = 'Function',
+    Number = 'Number',
+    Boolean = 'Boolean',
+    Null = 'Null',
+    Undefined = 'Undefined',
+    RegExp = 'RegExp',
+    Date = 'Date'
+}
+
+/**
+ *  数据类型
+ *
+ *  ''        ---->   String
+ *  {}        ---->   Object
+ *  []        ---->   Array
+ *  () => {}  ---->   Function
+ *  1         ---->   Number
+ *  false     ---->   Boolean
+ *  null      ---->   Null
+ *  undefined ---->   Undefined
+ *            ---->   Undefined
+ *  /at/      ---->   RegExp
+ *  new Date()---->   Date
+ *
+ */
+export const dataType = (data: any): EDataType => {
+    const stringPro = Object.prototype.toString.call(data);
+    const type = stringPro.split(' ')[1];
+    return type.slice(0, type.length - 1) as EDataType
+};
+

@@ -1,28 +1,26 @@
 import React, { useEffect } from 'react';
 import './index.less';
 import { RouteComponentProps } from '@reach/router'
-import LoginAction, { IAction } from "./action";
+import HomeAction, { IAction } from "./action";
 import { IState } from './type'
 import { RYActions, RYConnect } from '@reduxConfig'
 
 
-interface IProps extends RouteComponentProps, RYActions<IAction>, IState {}
+interface IProps extends RouteComponentProps, RYActions<IAction>, IState {
 
-class Login extends React.PureComponent<IProps, any> {
+}
+
+class Home extends React.PureComponent<IProps, any> {
 
   render() {
     return (
       <div className="login-app">
-        <span onClick={this.up}>Login</span>
+        <span>Home</span>
         <div onClick={this._add.bind(this)}>+</div>
         <span>{this.props.count}</span>
         <div onClick={this._sum.bind(this)}>-</div>
       </div>
     )
-  }
-
-  up = () => {
-    this.props.navigate && this.props.navigate('/home', {})
   }
 
   _add() {
@@ -36,4 +34,4 @@ class Login extends React.PureComponent<IProps, any> {
 }
 
 
-export default RYConnect(['LoginReducer'], [LoginAction])(Login)
+export default RYConnect(['HomeReducer'], [HomeAction])(Home)

@@ -4,17 +4,17 @@ class Msg {
         this.subs = {}
     }
 
-    on(event: any, cd: any) {
+    on(event: string, cd: Function) {
         (this.subs[event] || (this.subs[event] = [])).push(cd)
     }
 
-    trigger(event: any, ...args: any) {
+    trigger(event: string, ...args: any) {
         this.subs[event] && this.subs[event].forEach((cd: any) => {
             cd(...args)
         });
     }
 
-    once(event: any, onceCb: any) {
+    once(event: string, onceCb: Function) {
         const cd = (...args: any) => {
             onceCb(...args)
             this.off(event, onceCb)
@@ -22,7 +22,7 @@ class Msg {
         this.on(event, cd)
     }
 
-    off(event: any, offCb: any) {
+    off(event: string, offCb: any) {
         if (this.subs[event]) {
             let index = this.subs[event].findIndex((cb: any) => cb === offCb)
             this.subs[event].splice(index, 1)

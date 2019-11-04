@@ -37,6 +37,9 @@
       ],
       "@commons": [
         "./commons"
+      ],
+      "@reduxConfig": [
+        "./redux-config"
       ]
     }
   },
