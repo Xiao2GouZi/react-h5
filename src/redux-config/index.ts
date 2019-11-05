@@ -1,9 +1,11 @@
 
 import Store from './store'
-import {IReducers} from './reducers'
-import {ActionCreatorsMapObject, bindActionCreators, Dispatch} from 'redux'
-import {connect} from 'react-redux'
+import { IReducers } from './reducers'
+import { ActionCreatorsMapObject, bindActionCreators, Dispatch } from 'redux'
+import { connect } from 'react-redux'
 import { Util } from '@kits'
+import { createAction, ActionFunction1, Action, ActionFunction0, ActionFunctionAny } from 'redux-actions'
+
 
 export interface RYActions<T> {
     actions: T
@@ -30,7 +32,7 @@ export interface RYActions<T> {
   *  TODO:   两个reducer action 同名的问题需要解决
   *  
   */
- function RYConnect(propsKey: (keyof IReducers) | (keyof IReducers)[] | undefined, actions: ActionCreatorsMapObject | ActionCreatorsMapObject[] | undefined) {
+function RYConnect<IState = {}, IAction = {}>(propsKey: (keyof IReducers) | (keyof IReducers)[] | undefined, actions: ActionCreatorsMapObject | ActionCreatorsMapObject[] | undefined) {
     return (WarpComponent: any): any => {
         const mapStateToProps = (state: IReducers) => {
             if (!propsKey) {
@@ -66,13 +68,29 @@ export interface RYActions<T> {
             }
             return
         }
+
+        // <TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, State = {}
         return connect(mapStateToProps, mapDispatchToProps)(WarpComponent)
     }
 }
 
-
+/**
+*  包装 action
+*   T -----> 入参
+*   M -----> 返回
+* 
+* @param actionType 
+* @param action 
+*/
+function RYCreateAction<T = any, M = any>(actionType: string, action?: ActionFunction1<T, M>) {
+    if (action) {
+        return createAction<M, T>(actionType, action)
+    }
+    return createAction(actionType)
+}
 
 export {
     Store,
-    RYConnect
+    RYConnect,
+    RYCreateAction
 }

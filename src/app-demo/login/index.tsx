@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import './index.less';
 import { RouteComponentProps } from '@reach/router'
-import LoginAction, { IAction } from "./action";
+import LoginAction from "./action";
 import { IState } from './type'
 import { RYActions, RYConnect } from '@reduxConfig'
 
-
-interface IProps extends RouteComponentProps, RYActions<IAction>, IState {}
+interface IProps extends RouteComponentProps, RYActions<typeof LoginAction>, IState { }
 
 class Login extends React.PureComponent<IProps, any> {
 
