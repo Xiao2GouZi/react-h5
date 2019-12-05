@@ -1,12 +1,12 @@
 
- wepack.config.js
+ # wepack
 
     less,
     修改postcss配置文件
     <!-- antd-mobile -->
 
 
-### 全局属性注入  .env cross-env
+# 全局属性注入  .env cross-env
    #### .env
    [添加](https://github.com/Xiao2GouZi/react-h5/blob/master/.env) 
    ```
@@ -35,13 +35,20 @@
    ```
 
 
-### UI组件 antd-mobile
+# UI组件 antd-mobile
 
 全局样式配置: [config/antd-mobile-theme.js](https://github.com/Xiao2GouZi/react-h5/blob/master/config/antd-mobile-theme.js)
 
 
 
-### 屏幕适配 (viewport)
+# mock
+   [使用参考](https://github.com/Xiao2GouZi/react-h5/blob/master/mock/README.md)
+
+# iconfont
+   [使用参考](https://github.com/Xiao2GouZi/react-h5/blob/master/iconfont/README.md)   
+
+
+# 屏幕适配 (viewport)
    采用 px -> vw, vh, vmax, vmin
 
    配置连接: [config/postcss.config.js](https://github.com/Xiao2GouZi/react-h5/blob/master/config/postcss.config.js)   
@@ -49,7 +56,7 @@
    对vw, vh, vmax, vmin 支持设置: [kits/load-script.ts](https://github.com/Xiao2GouZi/react-h5/blob/master/src/kits/load-script.ts)
 
 
-### React.Lazy
+# React.Lazy
 
    ```
    import { LazyComponent } from '@components'
@@ -68,3 +75,20 @@
 
    ```
 
+
+# Redux
+   [redux]()  
+   [react-redux]()    
+   [redux-logger]()  
+   [redux-thunk]()   
+   [redux-actions]()   
+   [redux-batched-actions]()   
+   [reselect]()    
+   [redux-devtools-extension]()
+
+   ### redux包装 [redux-config/index.tsx](https://github.com/Xiao2GouZi/react-h5/blob/master/src/redux-config/) 
+    
+   ### redux demo [src/app-demo/redxu-demo/](https://github.com/Xiao2GouZi/react-h5/tree/master/src/app-demo/redux-demo)
+
+   
+  

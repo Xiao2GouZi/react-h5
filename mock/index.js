@@ -9,7 +9,7 @@ const http = require('http')
 let app = express();
 const dataPath = 'mock/data';
 
-function resolve (dir) {
+function resolve(dir) {
     return path.join(__dirname, '..', dir)
 }
 
@@ -26,7 +26,7 @@ console.log(' --- mock data', mockData);
 
 
 
-app.all('*', function(req, res) {
+app.all('/api/*', function (req, res) {
     console.log('originalUrl --> ', req.originalUrl);
     let queryArr = req.originalUrl.split('/');
     console.log(' -- originalUrl', queryArr);
@@ -34,19 +34,42 @@ app.all('*', function(req, res) {
     console.log(' -- originalUrl last ', lastQ);
     let response = mockData[lastQ]
     console.log(' -- query data', response);
-    res.json(Mock.mock(response));
+
+
+    console.log("req url", req.protocol + '://' + req.headers.host + req.originalUrl)
+    res.header("Access-Control-Allow-Origin", "http://fedev.cnsuning.com:3000");
+    res.header("Access-Control-Allow-Origin", req.headers.referer ? req.headers.referer.match(/^\w+\:\/\/[^\/]+/)[0] : '*');
+    res.header("Access-Control-Allow-Headers", "x-requested-with,mode, accept, origin, content-type,authorization,credentials");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Content-Type", "application/json;charset=utf-8");
+    res.header("Access-Control-Allow-Credentials", "true");
+
+
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    }
+    else {
+        res.json(Mock.mock(response));
+    }
+
+    // res.json(Mock.mock(response));
 });
 
 
 
 /*为app添加中间件处理跨域请求*/
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Upgrade-Insecure-Requests', '1');
-    next();
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", req.headers.referer ? req.headers.referer.match(/^\w+\:\/\/[^\/]+/)[0] : '*');
+    res.header("Access-Control-Allow-Headers", "x-requested-with,mode, accept, origin, content-type,authorization,credentials");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Content-Type", "application/json;charset=utf-8");
+    res.header("Access-Control-Allow-Credentials", "true");
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    }
+    else {
+        next();
+    }
 });
 
 

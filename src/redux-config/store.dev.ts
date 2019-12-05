@@ -3,7 +3,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import rootReducers from './reducers';
 import { createLogger } from 'redux-logger'  // 日志
 import thunk from 'redux-thunk';   // 异步
-import { batchActions, batchDispatchMiddleware } from 'redux-batched-actions';
+import { batchDispatchMiddleware, enableBatching } from 'redux-batched-actions';
 import { composeWithDevTools } from 'redux-devtools-extension';   // 可视化日志
 
 const store = () => {
@@ -30,11 +30,13 @@ const store = () => {
     const composeEnhancers = composeWithDevTools({
         // Specify name here, actionsBlacklist, actionsCreators and other options if needed
     });
+
     return createStore(
-        combineReducers({
-            ...rootReducers,
-            // router: routerReducer
-        }),
+        enableBatching(
+            combineReducers({
+                ...rootReducers,
+                // router: routerReducer
+            })),
         composeEnhancers(
             applyMiddleware(...middleware)
         )

@@ -2,6 +2,17 @@
   "name": "ry-react-ts",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
+    "start:demo": "cross-env REACT_APP_ENTRY=index-demo  nodemon scripts/start.js",
+    "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index node scripts/build.js",
+    "iconfont": "nodemon iconfont/index.js",
+    "mock": "nodemon mock/index.js",
+    "test": "node scripts/test.js",
+    "server": "cd build/ && http-server",
+    "copy": "node scripts/copy.js source=dist output=code",
+    "zip": "node scripts/zip.js source=bundle output=bundle-zip"
+  },
   "dependencies": {
     "@babel/core": "7.5.5",
     "@reach/router": "^1.2.1",
@@ -19,6 +30,7 @@
     "classnames": "^2.2.6",
     "cross-env": "^6.0.0",
     "css-loader": "2.1.1",
+    "dayjs": "^1.8.17",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "eslint": "^6.1.0",
@@ -33,6 +45,7 @@
     "fs-extra": "7.0.1",
     "html-webpack-plugin": "4.0.0-beta.5",
     "identity-obj-proxy": "3.0.0",
+    "immer": "^5.0.0",
     "is-wsl": "^1.1.0",
     "jest": "24.8.0",
     "jest-environment-jsdom-fourteen": "0.1.0",
@@ -57,6 +70,7 @@
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
     "redux-batched-actions": "^0.4.1",
+    "reselect": "^4.0.0",
     "resolve": "1.12.0",
     "resolve-url-loader": "3.1.0",
     "sass-loader": "7.2.0",
@@ -70,15 +84,6 @@
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "4.3.1"
-  },
-  "scripts": {
-    "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
-    "start:demo": "cross-env REACT_APP_ENTRY=index-demo  nodemon scripts/start.js",
-    "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index node scripts/build.js",
-    "iconfont": "nodemon iconfont/index.js",
-    "mock": "nodemon mock/index.js",
-    "test": "node scripts/test.js",
-    "server": "cd build/ && http-server"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -154,6 +159,8 @@
     "@types/redux-actions": "^2.6.1",
     "@types/redux-logger": "^3.0.7",
     "babel-plugin-import": "^1.12.1",
+    "chalk": "^3.0.0",
+    "compressing": "^1.4.0",
     "cssnano": "^4.1.10",
     "cssnano-preset-advanced": "^4.0.7",
     "mockjs": "^1.0.1-beta3",

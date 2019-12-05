@@ -3,6 +3,7 @@ import { Router, globalHistory, Location, Redirect } from "@reach/router"
 
 import Login from './app-demo/login'
 import Home from './app-demo/home'
+import ReduxDemo from './app-demo/redux-demo'
 // import Detail from './app-demo/detial'
 
 /**  */
@@ -34,6 +35,7 @@ const Route: React.FC = () => {
             <Login path='login' default={false} />
             <Redirect to='login' from='/' noThrow /> 
             <Home path='home/*' />
+            <ReduxDemo path='redux-demo'/>
             {/* <Detail path='detail' /> */}
             {/* <Redirect to='detail' from='home' noThrow /> */}
         </Router>

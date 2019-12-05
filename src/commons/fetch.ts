@@ -54,13 +54,14 @@ async function request<T = any>(param: IRequestCommonParam): Promise<IAsyncResul
 
     try {
         const response = await fetch(param.url, request);
-        const responseData: { errorCode: number, resultValue: any, errorMessage: string, successful: boolean } = await response.json();
+        console.log(' ----------> response', response)
+        const responseData: { code: string, data: any, message: string } = await response.json();
         console.log('response', param.url, responseData);
-        const { errorCode, resultValue, errorMessage, successful } = responseData;
+        const { code, data, message } = responseData;
         const ret = {
-            res: successful ?  (resultValue && resultValue.result) || {} : {} as T,
-            code: `${errorCode}`,
-            err: !successful ? errorMessage : '',
+            res: data as T,
+            code: code,
+            err: message,
         };
         return ret;
     } catch (err) {

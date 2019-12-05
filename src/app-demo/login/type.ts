@@ -1,18 +1,23 @@
 
 export interface IState {
-    count: number
+    headerCount: number,
+    inputInfoCount: number,
+    userInfo: {
+        name: string,
+        age: string,
+        sex: string
+    }
 }
 
 
 
-export const LoadData = 'LoadData'
-
-// export const LOGIN_CHECK_LOGIN_ADD = 'LOGIN_CHECK_LOGIN_ADD';
-// export const LOGIN_CHECK_LOGIN_SUM = 'LOGIN_CHECK_LOGIN_SUM';
-
-
-
 export enum EACTIONTYPE {
-    LOGIN_CHECK_LOGIN_ADD = 'LOGIN_CHECK_LOGIN_ADD',
-    LOGIN_CHECK_LOGIN_SUM = 'LOGIN_CHECK_LOGIN_SUM'
+    LOGIN_UPDATE_USER_INFO = 'LOGIN_UPDATE_USER_INFO',
+
+    LOGIN_HEADER_ADD = 'LOGIN_HEADER_ADD',
+    LOGIN_HEADER_SUM = 'LOGIN_HEADER_SUM',
+
+    LOGIN_INPUT_INFO_ADD = 'LOGIN_INPUT_INFO_ADD',
+    LOGIN_INPUT_INFO_SUM = 'LOGIN_INPUT_INFO_SUM',
+
 } 

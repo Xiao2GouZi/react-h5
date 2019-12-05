@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { RouteComponentProps } from '@reach/router'
 
 import './index.less';
-import HederInfo from './components/header'
-import InputInfo from './components/input-info'
-import AllAction from './components/all-action'
+import HederInfo from './components/batch-action'
+import InputInfo from './components/action'
+import Together from './components/together'
+import UserInfo from './components/user-info'
 
 
 interface IProps extends RouteComponentProps {
@@ -18,7 +19,8 @@ export default class Login extends React.PureComponent<IProps, any> {
       <div >
         <HederInfo />
         <InputInfo />
-        <AllAction />
+        <Together />
+        <UserInfo />
       </div>
     )
   }

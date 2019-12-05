@@ -15,20 +15,24 @@ const initialState: IState = {
 
 export const reducers: { [key in EACTIONTYPE]: ReducerMapValue<IState, any> } = {
 
-    'LOGIN_HEADER_ADD': RYReducer<IState, number>((draft, payload) => {
+    'REDUX_DEMO_HEADER_ADD': RYReducer<IState, number>((draft, payload) => {
         draft.headerCount = draft.headerCount + payload
     }),
-    'LOGIN_HEADER_SUM': RYReducer((draft, payload) => {
+    'REDUX_DEMO_HEADER_SUM': RYReducer((draft, payload) => {
         draft.headerCount = draft.headerCount - payload
     }),
-    'LOGIN_INPUT_INFO_ADD': RYReducer<IState, number>((draft, payload) => {
+    'REDUX_DEMO_INPUT_INFO_ADD': RYReducer<IState, number>((draft, payload) => {
         draft.inputInfoCount = draft.inputInfoCount + payload
     }),
-    'LOGIN_INPUT_INFO_SUM': RYReducer((draft, payload) => {
+    'REDUX_DEMO_INPUT_INFO_SUM': RYReducer((draft, payload) => {
         draft.inputInfoCount = draft.inputInfoCount - payload
     }),
-    'LOGIN_UPDATE_USER_INFO': RYReducer((draft, payload) => {
+    'REDUX_DEMO_UPDATE_USER_INFO': RYReducer((draft, payload) => {
         draft.userInfo = payload
+    }),
+    'REDUX_DEMO_SET_SEX': RYReducer((draft, payload) => {
+        console.log(' =========> REDUX_DEMO_SET_SEX', payload)
+        draft.userInfo.sex = payload
     })
 
 }
