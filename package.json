@@ -11,7 +11,8 @@
     "test": "node scripts/test.js",
     "server": "cd build/ && http-server",
     "copy": "node scripts/copy.js source=dist output=code",
-    "zip": "node scripts/zip.js source=bundle output=bundle-zip"
+    "zip": "node scripts/zip.js source=bundle output=bundle-zip",
+    "qrcode": "node scripts/qrcode.js"
   },
   "dependencies": {
     "@babel/core": "7.5.5",
@@ -163,13 +164,16 @@
     "compressing": "^1.4.0",
     "cssnano": "^4.1.10",
     "cssnano-preset-advanced": "^4.0.7",
+    "inquirer": "^7.0.0",
     "mockjs": "^1.0.1-beta3",
     "nodemon": "^1.19.2",
     "postcss-viewport-units": "^0.1.6",
     "postcss-write-svg": "^3.0.1",
+    "qrcode-terminal": "^0.12.0",
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "shelljs": "^0.8.3",
     "vconsole": "^3.3.4",
     "viewport-units-buggyfill": "^0.6.2"
   }

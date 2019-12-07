@@ -7,7 +7,7 @@
 
 
 # 全局属性注入  .env cross-env
-   #### .env
+   ### .env
    [添加](https://github.com/Xiao2GouZi/react-h5/blob/master/.env) 
    ```
    // 是否开启vconsle  true,false
@@ -24,7 +24,7 @@
    process.env.REACT_APP_V_CONSLO
    ```
 
-   #### cross-env
+   ### cross-env
    添加 
    ```
     "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
@@ -38,6 +38,20 @@
 # UI组件 antd-mobile
 
 全局样式配置: [config/antd-mobile-theme.js](https://github.com/Xiao2GouZi/react-h5/blob/master/config/antd-mobile-theme.js)
+
+# 开发辅助工具
+   [qrcode 扫码直接看效果](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/qrcode.js)
+    
+   * normal  
+      默认路由: http://192.168.0.1:3000
+   * custom 
+      自定义路由: http://192.168.0.1:3000/XXX
+
+   [copy](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/copy.js)
+
+
+
+   [zip](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/zip.js)   
 
 
 
@@ -76,7 +90,7 @@
    ```
 
 
-# Redux
+# Redux`
    [redux]()  
    [react-redux]()    
    [redux-logger]()  
