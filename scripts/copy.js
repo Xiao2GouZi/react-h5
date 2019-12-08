@@ -3,7 +3,7 @@ const fs = require('fs')
 const stat = fs.stat;
 const chalk = require("chalk");
 const path = require("path");
-const resolve = dir => path.join(__dirname, "", dir);
+const resolve = dir => path.join(__dirname, "../", dir);
 
 /*
  * 复制目录中的所有文件包括子目录

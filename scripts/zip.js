@@ -5,7 +5,7 @@ const chalk = require("chalk");
 const compressing = require("compressing");
 const dayjs = require("dayjs");
 
-const resolve = dir => path.join(__dirname, "", dir);
+const resolve = dir => path.join(__dirname, "../", dir);
 
 const argv = process.argv
 const source = argv[2].split("=")[1];

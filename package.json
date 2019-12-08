@@ -6,12 +6,13 @@
     "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
     "start:demo": "cross-env REACT_APP_ENTRY=index-demo  nodemon scripts/start.js",
     "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index node scripts/build.js",
+    "build:nginx": "node scripts/build-nginx.js",
     "iconfont": "nodemon iconfont/index.js",
     "mock": "nodemon mock/index.js",
     "test": "node scripts/test.js",
     "server": "cd build/ && http-server",
     "copy": "node scripts/copy.js source=dist output=code",
-    "zip": "node scripts/zip.js source=bundle output=bundle-zip",
+    "zip": "node scripts/zip.js source=build output=build-zip",
     "qrcode": "node scripts/qrcode.js"
   },
   "dependencies": {
@@ -175,6 +176,8 @@
     "redux-thunk": "^2.3.0",
     "shelljs": "^0.8.3",
     "vconsole": "^3.3.4",
-    "viewport-units-buggyfill": "^0.6.2"
+    "viewport-units-buggyfill": "^0.6.2",
+    "webpack-bundle-analyzer": "^3.6.0",
+    "webpack-cli": "^3.3.10"
   }
 }

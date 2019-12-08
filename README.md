@@ -42,6 +42,7 @@
 # 开发辅助工具
    [qrcode 扫码直接看效果](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/qrcode.js)
     
+    npm run qrcode
    * normal  
       默认路由: http://192.168.0.1:3000
    * custom 
@@ -49,9 +50,28 @@
 
    [copy](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/copy.js)
 
-
+    npm run copy
 
    [zip](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/zip.js)   
+
+    npm run zip
+
+   [build-nginx](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/build-nginx.js)
+    
+   前提本地安装了nginx, 并且nginx.congf配置  
+
+    我的配置
+    server {
+        listen       8989;
+        server_name  localhost;
+
+        location / {
+            root /Users/bank/Desktop/nginx/react-h5/;
+            index index.html index.htm;
+        }
+    }
+
+    npm run build:nginx
 
 
 
