@@ -21,7 +21,7 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "outDir": "build",
-    "experimentalDecorators":true,
+    "experimentalDecorators": true,
     "paths": {
       "@kits": [
         "./kits"
@@ -45,5 +45,8 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "template"
   ]
 }

@@ -1,9 +1,10 @@
-var path = require('path')
-var express = require('express')
-var path = require('path');
+const path = require('path')
+const express = require('express')
+const openBrowser = require('react-dev-utils/openBrowser');
 
-var port = 9000
-var app = express()
+const port = 9000
+const app = express()
+const host = 'http://localhost'
 
 app.use(express.static(path.resolve(__dirname, './')))
 
@@ -15,3 +16,6 @@ app.get('/', (_, res) => {
 // Here you can add any code.
 console.log(`App Mock Server running  ${port}`)
 app.listen(port)
+
+
+openBrowser(host + ':' + `${port}`);

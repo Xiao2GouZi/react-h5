@@ -36,6 +36,8 @@ const Route: React.FC = () => {
             <Redirect to='login' from='/' noThrow /> 
             <Home path='home/*' />
             <ReduxDemo path='redux-demo'/>
+
+            
             {/* <Detail path='detail' /> */}
             {/* <Redirect to='detail' from='home' noThrow /> */}
         </Router>

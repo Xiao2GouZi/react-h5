@@ -1,5 +1,3 @@
-
-
 import HomeReducer from '../app-demo/home/reducer'
 import LoginReducer from '../app-demo/login/reducer'
 import ReduxDemoReducer from '../app-demo/redux-demo/reducer'
@@ -16,5 +14,7 @@ const reducers: IReducers = {
     HomeReducer,
     ReduxDemoReducer
 }
+
+
 
 export default reducers
