@@ -41,95 +41,241 @@ var fsExtra = require('fs-extra');
 var path = require("path");
 var chalk = require("chalk");
 var inquirer = require('inquirer');
-function copyTemplate(cmd) {
+var _ = require('loadsh');
+var resolve = function (dir) { return path.join(__dirname, "../../", dir); };
+/** 全局配置的reducer */
+var reducerPath = resolve("src/redux-config/reducers.ts");
+var templatePath = resolve("template");
+function template(cwd) {
+    if (cwd.page) {
+        templatePage();
+    }
+    if (cwd.component) {
+        templateComponent();
+    }
+}
+/**
+*  create template page
+*/
+function templatePage() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, pageType, pageName, cwd, _b, success_1, path_1, removeD, error_1, _c, success, path;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
-                case 0: return [4 /*yield*/, condition()];
+        var pageName, pageType, reducerName, pageConditionRes, destinationRes, error_1, _a, success, path, cwd;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    pageName = '';
+                    pageType = '';
+                    return [4 /*yield*/, pageCondition()];
                 case 1:
-                    _a = _d.sent(), pageType = _a.pageType, pageName = _a.pageName;
-                    console.log(chalk.green("template type ====>  " + pageType));
-                    console.log(chalk.green("page name  ====>  " + pageName));
-                    cwd = process.cwd();
-                    if (!cmd.overrid) return [3 /*break*/, 8];
+                    pageConditionRes = _b.sent();
+                    if (!pageConditionRes.success)
+                        return [2 /*return*/];
+                    pageName = pageConditionRes.param.pageName;
+                    pageType = pageConditionRes.param.pageType;
+                    reducerName = pageConditionRes.param.reducerName;
+                    console.log(chalk.green("template type ====> " + pageType));
+                    console.log(chalk.green("page name ====> " + pageName));
+                    console.log(chalk.green("reducer name ====> " + reducerName));
                     return [4 /*yield*/, getDestinationPath(pageName)];
                 case 2:
-                    _b = _d.sent(), success_1 = _b.success, path_1 = _b.path;
-                    if (!success_1) return [3 /*break*/, 7];
-                    console.log(chalk.yellow("destination exit ==> " + path_1 + " "));
-                    _d.label = 3;
+                    destinationRes = _b.sent();
+                    if (!destinationRes.success) return [3 /*break*/, 7];
+                    console.log(chalk.yellow("destination exit ==> " + destinationRes.path + " "));
+                    _b.label = 3;
                 case 3:
-                    _d.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, fsExtra.removeSync(path_1)];
+                    _b.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, fsExtra.removeSync(destinationRes.path)];
                 case 4:
-                    removeD = _d.sent();
+                    _b.sent();
                     console.log(chalk.green("remove destination success"));
                     return [3 /*break*/, 6];
                 case 5:
-                    error_1 = _d.sent();
+                    error_1 = _b.sent();
                     console.log(chalk.red("destination remove path err ==> " + error_1 + " "));
                     return [3 /*break*/, 6];
                 case 6: return [3 /*break*/, 8];
                 case 7:
                     console.log(chalk.green("destination path not exit"));
-                    _d.label = 8;
+                    _b.label = 8;
                 case 8: return [4 /*yield*/, getTemplatePath(pageType)];
                 case 9:
-                    _c = _d.sent(), success = _c.success, path = _c.path;
+                    _a = _b.sent(), success = _a.success, path = _a.path;
                     if (!success)
                         return [2 /*return*/];
                     if (!fsExtra.pathExistsSync(path)) {
                         console.log(chalk.red("template not exit " + path));
                         return [2 /*return*/];
                     }
-                    console.log(chalk.green("template path  " + path));
-                    if (fsExtra.pathExistsSync(path)) {
-                        try {
-                            fsExtra.copySync(path, cwd + ("/" + pageName));
-                            console.log(chalk.green("copy success "));
-                        }
-                        catch (error) {
-                            console.log(chalk.red("copy err"));
-                            return [2 /*return*/];
-                        }
+                    console.log(chalk.green("template path " + path));
+                    try {
+                        cwd = process.cwd();
+                        fsExtra.copySync(path, cwd + ("/" + pageName));
+                        console.log(chalk.green("copy success "));
                     }
-                    writeReducer(pageName);
-                    setPage(pageName);
+                    catch (error) {
+                        console.log(chalk.red("copy err"));
+                    }
+                    writeReducer(pageName, reducerName);
+                    setPage(pageName, reducerName);
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.copyTemplate = copyTemplate;
 /** 筛选条件 */
-function condition() {
+function pageCondition() {
     return __awaiter(this, void 0, void 0, function () {
-        var promptList, pageType, promptInput, pageName;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
+        var _a, success, path, files, promptList, pageType, pageName, reducers, selectReducer, promptReducer, reducerName, reducerObj, custReducer, name_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, getTemplatePath()];
+                case 1:
+                    _a = _b.sent(), success = _a.success, path = _a.path;
+                    if (!success) {
+                        console.log(chalk.red("template ====> fail"));
+                        return [2 /*return*/, { success: false }];
+                    }
+                    console.log(chalk.green("template path ====> " + path));
+                    files = fsExtra.readdirSync(path);
+                    console.log(chalk.green("template type ====>", files));
+                    files = _.remove(files, function (item) { return item !== 'component'; });
                     promptList = [{
                             type: 'list',
                             name: 'name',
                             message: '请选择需要创建的页面类型',
-                            choices: ['page', 'order']
+                            choices: files
                         }];
                     return [4 /*yield*/, inquirer.prompt(promptList)];
-                case 1:
-                    pageType = _a.sent();
+                case 2:
+                    pageType = _b.sent();
+                    return [4 /*yield*/, setPageName()];
+                case 3:
+                    pageName = _b.sent();
+                    reducers = getReducer();
+                    console.log(chalk.green("reducers ====>", reducers));
+                    selectReducer = _.concat(reducers, ['custom']);
+                    promptReducer = [{
+                            type: 'checkbox',
+                            name: 'name',
+                            message: '请选择需要绑定的reducer',
+                            choices: selectReducer,
+                            validate: function (value) {
+                                console.log(' =======> value', value);
+                                return true;
+                            }
+                        }];
+                    return [4 /*yield*/, inquirer.prompt(promptReducer)];
+                case 4:
+                    reducerObj = _b.sent();
+                    if (!reducerObj.name.length) {
+                        console.log(chalk.red("\u8BF7\u8BBE\u7F6Ereducer name"));
+                        return [2 /*return*/, {
+                                success: false
+                            }];
+                    }
+                    reducerName = _.map(reducerObj.name, function (item) {
+                        return {
+                            key: item === 'custom',
+                            value: item
+                        };
+                    });
+                    custReducer = _.filter(reducerName, function (item) { return item.key; });
+                    if (!custReducer.length) return [3 /*break*/, 6];
+                    return [4 /*yield*/, setReducerName(reducers)];
+                case 5:
+                    name_1 = _b.sent();
+                    _.forEach(reducerName, function (item) {
+                        if (item.key) {
+                            item.value = name_1;
+                        }
+                    });
+                    _b.label = 6;
+                case 6: return [2 /*return*/, {
+                        success: true,
+                        param: {
+                            pageType: pageType.name,
+                            pageName: pageName,
+                            reducerName: reducerName
+                        }
+                    }];
+            }
+        });
+    });
+}
+/** set page name */
+function setPageName() {
+    return __awaiter(this, void 0, void 0, function () {
+        var promptInput, pageName, promptList, pageNameS;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
                     promptInput = [{
                             type: 'input',
                             name: 'name',
                             message: '请输入页面名称'
                         }];
                     return [4 /*yield*/, inquirer.prompt(promptInput)];
-                case 2:
+                case 1:
                     pageName = _a.sent();
-                    return [2 /*return*/, {
-                            pageType: pageType.name,
-                            pageName: pageName.name
+                    if (!fsExtra.pathExistsSync(process.cwd() + "/" + pageName.name)) return [3 /*break*/, 6];
+                    promptList = [{
+                            type: 'list',
+                            name: 'name',
+                            message: '该路径下页面已经存在，请选择如何操作。 again: 重新输入; continue: 删除存在的，创建新的',
+                            choices: ['again', 'continue']
                         }];
+                    return [4 /*yield*/, inquirer.prompt(promptList)];
+                case 2:
+                    pageNameS = _a.sent();
+                    console.log(' ===> ', pageNameS);
+                    if (!(pageNameS.name === 'again')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, setPageName()];
+                case 3: return [2 /*return*/, _a.sent()];
+                case 4:
+                    if (pageNameS.name === 'continue') {
+                        return [2 /*return*/, pageName.name];
+                    }
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6: return [2 /*return*/, pageName.name];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+/** set reducer name */
+function setReducerName(reducers) {
+    return __awaiter(this, void 0, void 0, function () {
+        var promptInputReducer, reducername, promptAffirm, affirm;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    promptInputReducer = [{
+                            type: 'input',
+                            name: 'name',
+                            message: '请输入reducer名称 eg. xxxReducer 首字母大写, 驼峰,添加Reducer',
+                            filter: function (value) {
+                                var _value = chartUp(value);
+                                return _value.indexOf('Reducer') >= 0 ? _value : _value + "Reducer";
+                            }
+                        }];
+                    return [4 /*yield*/, inquirer.prompt(promptInputReducer)];
+                case 1:
+                    reducername = _a.sent();
+                    if (!(_.indexOf(reducers, reducername.name) >= 0)) return [3 /*break*/, 5];
+                    promptAffirm = {
+                        type: "confirm",
+                        message: "已存在reducers中，是否重新输入",
+                        name: "name"
+                    };
+                    return [4 /*yield*/, inquirer.prompt(promptAffirm)];
+                case 2:
+                    affirm = _a.sent();
+                    if (!affirm.name) return [3 /*break*/, 4];
+                    return [4 /*yield*/, setReducerName(reducers)];
+                case 3: return [2 /*return*/, _a.sent()];
+                case 4: return [2 /*return*/, reducername.name];
+                case 5: return [2 /*return*/, reducername.name];
             }
         });
     });
@@ -139,8 +285,8 @@ function getTemplatePath(type) {
     if (type === void 0) { type = ''; }
     return new Promise(function (resolve, reject) {
         var _type = type ? "/" + type : '';
-        var typePath = path.join(__dirname, "../../", "template") + _type;
-        console.log(chalk.green("template path " + typePath));
+        var typePath = templatePath + _type;
+        // console.log(chalk.green(`template path =====> ${typePath}`))
         glob(typePath, {}, function (er, file) {
             if (!file.length) {
                 console.log(chalk.red("template path err " + typePath));
@@ -150,10 +296,10 @@ function getTemplatePath(type) {
     });
 }
 /** 拷贝目的路径 */
-function getDestinationPath(type) {
-    if (type === void 0) { type = ''; }
+function getDestinationPath(pageName) {
+    if (pageName === void 0) { pageName = ''; }
     return new Promise(function (resolve, reject) {
-        var _type = type ? "/" + type : '';
+        var _type = pageName ? "/" + pageName : '';
         var path = process.cwd() + _type;
         console.log(chalk.green("destination path " + path));
         glob(path, {}, function (er, file) {
@@ -162,33 +308,58 @@ function getDestinationPath(type) {
     });
 }
 /** 设置全局的redux-config */
-function writeReducer(pageName) {
+function writeReducer(pageName, reducerName) {
     if (pageName === void 0) { pageName = ''; }
-    var _pageName = chartUp(pageName);
-    var reducerPath = path.join(__dirname, "../../", "src/redux-config/reducers.ts");
-    if (!fsExtra.existsSync(reducerPath)) {
-        console.log(chalk.red(' ------> 为解析到', reducerPath));
+    var custom = _.filter(reducerName, function (item) { return item.key; });
+    if (!custom.length) {
+        console.log(chalk.yellow("reducer not custom"));
         return;
     }
-    var pagePath = process.cwd() + "/" + pageName;
-    var reducerContent = fsExtra.readFileSync(reducerPath, "utf8");
+    var _reducerName = custom[0].value;
+    var reducerContent = getReducerContent();
     var reducerArr = reducerContent.split('\n');
-    reducerArr.unshift("import " + _pageName + "Reducer from '../" + pagePath.split("src/")[1] + "/reducer'");
+    var pagePath = process.cwd() + "/" + pageName;
+    reducerArr.unshift("import " + _reducerName + " from '../" + pagePath.split("src/")[1] + "/reducer'");
     var interfaceIndex = reducerArr.indexOf('export interface IReducers {');
     if (reducerContent === -1) {
         console.log(chalk.red(' ------> reducer 结构有问题，请检查'));
         return;
     }
-    reducerArr.splice(interfaceIndex + 1, 0, "    " + _pageName + "Reducer: any,");
+    reducerArr.splice(interfaceIndex + 1, 0, "    " + _reducerName + ": any,");
     var exportIndex = reducerArr.indexOf('const reducers: IReducers = {');
     if (exportIndex === -1) {
         console.log(chalk.red(' ------> reducer 结构有问题，请检查'));
         return;
     }
-    reducerArr.splice(exportIndex + 1, 0, "    " + _pageName + "Reducer: " + _pageName + "Reducer,");
+    reducerArr.splice(exportIndex + 1, 0, "    " + _reducerName + ",");
     var reducerStr2 = reducerArr.join('\n');
-    console.log(chalk.green(' ==> success \n', reducerStr2));
-    fsExtra.writeFileSync(reducerPath, reducerStr2);
+    try {
+        fsExtra.writeFileSync(reducerPath, reducerStr2);
+    }
+    catch (error) {
+        console.log(chalk.red(' ------> write reducer err', error));
+    }
+}
+/** 获取全局配置的reducer */
+function getReducerContent() {
+    if (!fsExtra.existsSync(reducerPath)) {
+        console.log(chalk.red(' ------> 为解析到', reducerPath));
+        return;
+    }
+    var reducerContent = fsExtra.readFileSync(reducerPath, "utf8");
+    return reducerContent;
+}
+/** 获取项目中所有的reducers */
+function getReducer() {
+    var reducerContent = getReducerContent();
+    var reducerArr = reducerContent.split('\n');
+    var start = _.indexOf(reducerArr, "const reducers: IReducers = {");
+    var end = _.lastIndexOf(reducerArr, "}");
+    var reducerA = _.slice(reducerArr, start + 1, end);
+    return reducerA.map(function (item) {
+        var _item = item.replace(/\s*/g, "").split(':')[0];
+        return _item.replace(',', '');
+    });
 }
 /** 获取指定字符串之间的字符串 */
 function getInnerString(source, prefix, postfix) {
@@ -204,11 +375,13 @@ function getInnerString(source, prefix, postfix) {
     return arr;
 }
 /**
- * 修改page中的reducer名称
- */
-function setPage(pageName) {
+* 修改page中的reducer名称
+*/
+function setPage(pageName, reducerName) {
     if (pageName === void 0) { pageName = ''; }
-    var _pageName = chartUp(pageName);
+    var _reducerName = _.map(reducerName, function (item) {
+        return "'" + item.value + "'";
+    });
     var pagePath = process.cwd() + "/" + pageName + "/components/user-info/index.tsx";
     if (!fsExtra.existsSync(pagePath)) {
         console.log(chalk.red(' ------> 未解析到', pagePath));
@@ -226,19 +399,206 @@ function setPage(pageName) {
     });
     var targetArr = getInnerString(pageExportStr, "[", "]");
     var targetStr = targetArr[0].split(',')[0];
-    pageExportStr = pageExportStr.replace(targetStr, "'" + _pageName + "Reducer'");
-    console.log(chalk.green(' ===> pageExportStr', pageExportStr));
+    pageExportStr = pageExportStr.replace(targetStr, _reducerName.join(', '));
+    // console.log(chalk.green(' ===> pageExportStr', pageExportStr))
     pageArr[targetIndex] = pageExportStr;
     var pageContent2 = pageArr.join('\n');
-    fsExtra.writeFileSync(pagePath, pageContent2);
+    try {
+        fsExtra.writeFileSync(pagePath, pageContent2);
+    }
+    catch (error) {
+        console.log(chalk.red(' ------> set page reducer err', error));
+    }
 }
+/** 首字母大写 */
 function chartUp(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+// ------------------------------------------- component -------------------------------------
 /**
- *
- * //TODO:  ---->
- *
- *
- *
+ * create template component
  */
+function templateComponent() {
+    return __awaiter(this, void 0, void 0, function () {
+        var componentName, reducers, destinationRes, error_2, _a, success, path, cwd;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, setComponentName()];
+                case 1:
+                    componentName = _b.sent();
+                    console.log(chalk.green("component name " + componentName));
+                    return [4 /*yield*/, setComponentReducer()];
+                case 2:
+                    reducers = _b.sent();
+                    if (!reducers.success)
+                        return [2 /*return*/];
+                    console.log(chalk.green("component reducer ", JSON.stringify(reducers.reducerName)));
+                    return [4 /*yield*/, getDestinationPath(componentName)];
+                case 3:
+                    destinationRes = _b.sent();
+                    if (!destinationRes.success) return [3 /*break*/, 8];
+                    console.log(chalk.yellow("destination exit ==> " + destinationRes.path + " "));
+                    _b.label = 4;
+                case 4:
+                    _b.trys.push([4, 6, , 7]);
+                    return [4 /*yield*/, fsExtra.removeSync(destinationRes.path)];
+                case 5:
+                    _b.sent();
+                    console.log(chalk.green("remove destination success"));
+                    return [3 /*break*/, 7];
+                case 6:
+                    error_2 = _b.sent();
+                    console.log(chalk.red("destination remove path err ==> " + error_2 + " "));
+                    return [3 /*break*/, 7];
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    console.log(chalk.green("destination path not exit"));
+                    _b.label = 9;
+                case 9: return [4 /*yield*/, getTemplatePath('component')];
+                case 10:
+                    _a = _b.sent(), success = _a.success, path = _a.path;
+                    if (!success)
+                        return [2 /*return*/];
+                    if (!fsExtra.pathExistsSync(path)) {
+                        console.log(chalk.red("template not exit " + path));
+                        return [2 /*return*/];
+                    }
+                    console.log(chalk.green("template path " + path));
+                    try {
+                        cwd = process.cwd();
+                        fsExtra.copySync(path, cwd + ("/" + componentName));
+                        console.log(chalk.green("copy success "));
+                    }
+                    catch (error) {
+                        console.log(chalk.red("copy err"));
+                    }
+                    setComponent(componentName, reducers.reducerName);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+/** set component name */
+function setComponentName() {
+    return __awaiter(this, void 0, void 0, function () {
+        var promptInput, pageNameObj, pageName, promptList, pageNameS;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    promptInput = [{
+                            type: 'input',
+                            name: 'name',
+                            message: '请输入component名称'
+                        }];
+                    return [4 /*yield*/, inquirer.prompt(promptInput)];
+                case 1:
+                    pageNameObj = _a.sent();
+                    pageName = pageNameObj.name;
+                    if (!fsExtra.pathExistsSync(process.cwd() + "/" + pageName)) return [3 /*break*/, 6];
+                    promptList = [{
+                            type: 'list',
+                            name: 'name',
+                            message: '该路径下component已经存在，请选择如何操作。 again: 重新输入; continue: 删除存在的，创建新的',
+                            choices: ['again', 'continue']
+                        }];
+                    return [4 /*yield*/, inquirer.prompt(promptList)];
+                case 2:
+                    pageNameS = _a.sent();
+                    console.log(' ===> ', pageNameS);
+                    if (!(pageNameS.name === 'again')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, setComponentName()];
+                case 3: return [2 /*return*/, _a.sent()];
+                case 4:
+                    if (pageNameS.name === 'continue') {
+                        return [2 /*return*/, pageName];
+                    }
+                    _a.label = 5;
+                case 5: return [3 /*break*/, 7];
+                case 6: return [2 /*return*/, pageName];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+/**  */
+function setComponentReducer() {
+    return __awaiter(this, void 0, void 0, function () {
+        var reducers, promptReducer, reducerName, reducerObj;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    reducers = getReducer();
+                    console.log(chalk.green("reducers ====>", reducers));
+                    promptReducer = [{
+                            type: 'checkbox',
+                            name: 'name',
+                            message: '请选择需要绑定的reducer',
+                            choices: reducers,
+                            validate: function (value) {
+                                console.log(' =======> value', value);
+                                return true;
+                            }
+                        }];
+                    return [4 /*yield*/, inquirer.prompt(promptReducer)];
+                case 1:
+                    reducerObj = _a.sent();
+                    if (!reducerObj.name.length) {
+                        console.log(chalk.red("\u8BF7\u8BBE\u7F6Ereducer name"));
+                        return [2 /*return*/, {
+                                success: false
+                            }];
+                    }
+                    reducerName = _.map(reducerObj.name, function (item) {
+                        return {
+                            key: false,
+                            value: item
+                        };
+                    });
+                    return [2 /*return*/, {
+                            success: true,
+                            reducerName: reducerName
+                        }];
+            }
+        });
+    });
+}
+function setComponent(componentName, reducerNames) {
+    var _reducerName = _.map(reducerNames, function (item) {
+        return "'" + item.value + "'";
+    });
+    var pagePath = process.cwd() + "/" + componentName + "/index.tsx";
+    if (!fsExtra.existsSync(pagePath)) {
+        console.log(chalk.red(' ------> 未解析到', pagePath));
+        return;
+    }
+    var pageContent = fsExtra.readFileSync(pagePath, "utf8");
+    var pageArr = pageContent.split('\n');
+    var pageExportStr = '';
+    var targetIndex = 0;
+    pageArr.forEach(function (item, index) {
+        if (item.indexOf('RYConnect') > 0) {
+            pageExportStr = item;
+            targetIndex = index;
+        }
+    });
+    var targetArr = getInnerString(pageExportStr, "[", "]");
+    var targetStr = targetArr[0].split(',')[0];
+    pageExportStr = pageExportStr.replace(targetStr, _reducerName.join(', '));
+    // console.log(chalk.green(' ===> pageExportStr', pageExportStr))
+    pageArr[targetIndex] = pageExportStr;
+    var pageContent2 = pageArr.join('\n');
+    try {
+        fsExtra.writeFileSync(pagePath, pageContent2);
+    }
+    catch (error) {
+        console.log(chalk.red(' ------> set component reducer err', error));
+    }
+}
+exports["default"] = template;
+/**
+*
+* //TODO:
+*   1. 覆盖 page 的时候, src/redux-config/reduers.ts 中的reducer 需要手动清理
+*
+*
+*/ 

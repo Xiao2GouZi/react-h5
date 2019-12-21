@@ -175,6 +175,7 @@
     "fs-extra": "^7.0.1",
     "glob": "^7.1.6",
     "inquirer": "^7.0.0",
+    "loadsh": "0.0.4",
     "mockjs": "^1.0.1-beta3",
     "nodemon": "^1.19.2",
     "postcss-viewport-units": "^0.1.6",

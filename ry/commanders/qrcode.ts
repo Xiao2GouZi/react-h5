@@ -5,7 +5,7 @@ const qrcodeTerminal = require('qrcode-terminal')
 const inquirer = require('inquirer');
 const interfaces = os.networkInterfaces()
 
-function getIPAdress() {
+function getIPAdress(): string {
     for (const devName in interfaces) {
         const iface = interfaces[devName];
         for (let i = 0; i < iface.length; i++) {
@@ -39,13 +39,15 @@ const qrcode = async () => {
     if (route.length > 0) {
         qrUrl = qrUrl + "/" + route
     }
-    console.log(chalk.yellow('qrcode url' + qrUrl));
+    console.log(chalk.yellow('qrcode url  == > ' + qrUrl));
     qrcodeTerminal.generate(qrUrl, {
         small: false
     })
 }
 
-qrcode()
+
+export default qrcode
+
 
 
 

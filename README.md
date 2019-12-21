@@ -110,7 +110,7 @@
    ```
 
 
-# Redux`
+# Redux
    [redux]()  
    [react-redux]()    
    [redux-logger]()  
