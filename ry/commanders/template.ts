@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const glob = require("glob")
 const fsExtra = require('fs-extra')
 const path = require("path");

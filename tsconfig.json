@@ -44,7 +44,7 @@
     }
   },
   "include": [
-    "src"
+    "src", "react-app-env.d.ts"
   ],
   "exclude": [
     "template"

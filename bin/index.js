@@ -42,4 +42,13 @@ commander.command('build:nginx')
  * */
 commander.command('qrcode')
     .action(index_1.Qrcode);
+/**  */
+commander
+    .command('dps:init')
+    .description('create a default dps.config.js file')
+    .action(index_1.DpsInit);
+commander
+    .command('dps:start')
+    .description('start create a skeleton screen')
+    .action(index_1.DpsStart);
 commander.parse(process.argv);

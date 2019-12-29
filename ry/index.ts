@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Template, BuildNginx, Qrcode } from './commanders/index'
+import { Template, BuildNginx, Qrcode, DpsInit, DpsStart } from './commanders/index'
 const commander = require('commander');
 
 /**
@@ -44,6 +44,21 @@ commander.command('build:nginx')
  * */
 commander.command('qrcode')
     .action(Qrcode)
+
+
+/**  */
+commander
+    .command('dps:init')
+    .description('create a default dps.config.js file')
+    .action(DpsInit);
+
+
+commander
+    .command('dps:start')
+    .description('start create a skeleton screen')
+    .action(DpsStart);
+
+
 
 
 commander.parse(process.argv)
