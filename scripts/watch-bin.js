@@ -5,15 +5,14 @@ var ts = require("gulp-typescript");
 const fsE = require('fs-extra')
 const chalk = require("chalk");
 
-
 const copy = () => {
-    const paths = ["./ry/example/**"]
+    const paths = ["./ry/walking/**"]
     return gulp.src(paths)
-        .pipe(gulp.dest("./bin/example"))
+        .pipe(gulp.dest("./bin/walking"))
 }
 
 const tsToJs = () => {
-    const paths = ["./ry/**/*.ts", "!./ry/example"]
+    const paths = ["./ry/**/*.ts", "!./ry/walking"]
     return gulp.src(paths)
         .pipe(ts({
             // "baseUrl": "./ry",
@@ -26,22 +25,22 @@ const tsToJs = () => {
             "allowSyntheticDefaultImports": true,
             "strict": true,
             "forceConsistentCasingInFileNames": true,
-            "module": "esnext",
+            "module": "CommonJS",
             "moduleResolution": "node",
             "isolatedModules": true,
             "jsx": "react",
             "experimentalDecorators": true,
             "resolveJsonModule": true,
             "noEmit": true,
+            "alwaysStrict": true
         }))
         .pipe(gulp.dest("./bin"))
 }
 
-
 const watchBin = () => {
     const watcher = gulp.watch("./ry/**");
     const handle2 = (path) => {
-        if (path.indexOf('example') >= 0) {
+        if (path.indexOf('walking') >= 0) {
             copy()
         } else {
             tsToJs()

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var os = require('os');
 var chalk = require("chalk");
 var qrcodeTerminal = require('qrcode-terminal');
@@ -72,7 +72,7 @@ var qrcode = function () { return __awaiter(void 0, void 0, void 0, function () 
                 promptInput = [{
                         type: 'input',
                         name: 'description',
-                        message: '请输入需要打开的页面路由'
+                        message: '请输入需要打开的页面路由',
                     }];
                 return [4 /*yield*/, inquirer.prompt(promptInput)];
             case 2:
@@ -92,4 +92,4 @@ var qrcode = function () { return __awaiter(void 0, void 0, void 0, function () 
         }
     });
 }); };
-exports["default"] = qrcode;
+exports.default = qrcode;

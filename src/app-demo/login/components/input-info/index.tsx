@@ -11,7 +11,7 @@ class Index extends React.PureComponent<IProps, any> {
   render() {
     console.log(' --------> input info render')
     return (
-      <div className="login-header">
+      <div className="login-header" id='login-input-info'>
         <span >Login input info</span>
         <div onClick={this._add.bind(this)}>+</div>
         <span>{this.props.inputInfoCount}</span>

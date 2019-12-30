@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var glob = require("glob");
 var fsExtra = require('fs-extra');
 var path = require("path");
@@ -125,7 +125,7 @@ function templatePage() {
 }
 /** 筛选条件 */
 function pageCondition() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var _a, success, path, files, promptList, pageType, pageName, reducers, selectReducer, promptReducer, reducerName, reducerObj, custReducer, name_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -205,7 +205,7 @@ function pageCondition() {
 }
 /** set page name */
 function setPageName() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var promptInput, pageName, promptList, pageNameS;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -213,7 +213,7 @@ function setPageName() {
                     promptInput = [{
                             type: 'input',
                             name: 'name',
-                            message: '请输入页面名称'
+                            message: '请输入页面名称',
                         }];
                     return [4 /*yield*/, inquirer.prompt(promptInput)];
                 case 1:
@@ -246,7 +246,7 @@ function setPageName() {
 }
 /** set reducer name */
 function setReducerName(reducers) {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var promptInputReducer, reducername, promptAffirm, affirm;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -267,7 +267,7 @@ function setReducerName(reducers) {
                     promptAffirm = {
                         type: "confirm",
                         message: "已存在reducers中，是否重新输入",
-                        name: "name"
+                        name: "name",
                     };
                     return [4 /*yield*/, inquirer.prompt(promptAffirm)];
                 case 2:
@@ -481,7 +481,7 @@ function templateComponent() {
 }
 /** set component name */
 function setComponentName() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var promptInput, pageNameObj, pageName, promptList, pageNameS;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -489,7 +489,7 @@ function setComponentName() {
                     promptInput = [{
                             type: 'input',
                             name: 'name',
-                            message: '请输入component名称'
+                            message: '请输入component名称',
                         }];
                     return [4 /*yield*/, inquirer.prompt(promptInput)];
                 case 1:
@@ -523,7 +523,7 @@ function setComponentName() {
 }
 /**  */
 function setComponentReducer() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var reducers, promptReducer, reducerName, reducerObj;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -595,7 +595,7 @@ function setComponent(componentName, reducerNames) {
         console.log(chalk.red(' ------> set component reducer err', error));
     }
 }
-exports["default"] = template;
+exports.default = template;
 /**
 *
 * //TODO:

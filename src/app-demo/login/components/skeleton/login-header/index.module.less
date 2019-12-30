@@ -1,0 +1,30 @@
+@keyframes opacity {
+	0% {
+		opacity: 1
+	}
+	50% {
+		opacity: .5
+	}
+	100% {
+		opacity: 1
+	}
+}
+
+.content {
+    background: #ffffff;
+}
+
+
+.skeleton_item{
+	position:fixed;
+	z-index:999;
+	background:#ecf0f2;
+	animation:opacity 1s linear infinite;;
+}
+.skeleton_content{
+	top:0%;
+	left:0%;
+	width:100%;
+	position:fixed;
+	z-index:990;}
+	

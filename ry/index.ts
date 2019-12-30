@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import { Template, BuildNginx, Qrcode, DpsInit, DpsStart } from './commanders/index'
 const commander = require('commander');
 

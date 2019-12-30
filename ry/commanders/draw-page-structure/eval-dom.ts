@@ -7,7 +7,9 @@ function evalDOM() {
     const ELEMENTS = ['audio', 'button', 'canvas', 'code', 'img', 'input', 'pre', 'svg', 'textarea', 'video', 'xmp'];
 
     /** 存放标签 */
-    const blocks = [];
+    const blocks = {};
+    let block_key = '';
+    let css: string = ''
 
     const win_w = window.innerWidth;
     const win_h = window.innerHeight;
@@ -15,7 +17,6 @@ function evalDOM() {
     let agrs: any = arguments;
     if (!agrs.length) agrs = { length: 1, 0: {} };
     let agrs0 = agrs[0];
-
 
     if (agrs.length !== 1 || getArgtype(agrs0) !== 'object') {
         agrs = parseAgrs(Object.values(agrs));
@@ -33,22 +34,34 @@ function evalDOM() {
     createCommonClass(classProps);
 
     function drawBlock({ width = 0, height = 0, top = 0, left = 0, zIndex = 999, background = agrs.background, radius = '', subClas = false } = {}) {
-        const styles = ['height:' + height + '%'];
-
+        const styles = [`height: "${height}%"`];
         if (!subClas) {
-            styles.push('top:' + top + '%', 'left:' + left + '%', 'width:' + width + '%');
+            styles.push(`top: "${top}%", left: "${left}%", width: "${width}%"`);
         }
 
         if (classProps.zIndex !== zIndex) {
-            styles.push('z-index:' + zIndex);
+            styles.push('zIndex:' + zIndex);
         }
 
         if (classProps.background !== background) {
-            styles.push('background:' + background);
+            styles.push(`backgroundColor: "${background}"`);
         }
 
-        radius && radius != '0px' && styles.push('border-radius:' + radius);
-        blocks.push(`<div class="_${subClas ? ' __' : ''}" style="${styles.join(';')}"></div>`);
+        radius && radius != '0px' && styles.push(`borderRadius: "${radius}"`);
+
+
+
+
+        // const block_value = blocks[block_key]
+
+        const _html = `<div className=${subClas ? "{`${Styles.skeleton_content}`}" : "{`${Styles.skeleton_item}`}"} style={{${styles.join(',')}}}></div>\n`
+
+
+        console.log(' ===> ')
+
+        blocks[block_key].push(_html)
+
+        // blocks[block_key] = block_value ? block_value.push(_html) : [_html];
     }
 
     function wPercent(x) {
@@ -70,13 +83,24 @@ function evalDOM() {
     }
 
     function getRootNode(el) {
-        console.log(' =====> getRootNode', el)
         if (!el) return el;
-        return typeof el === 'object' ?
-            el :
-            (getArgtype(el) === 'string' ?
-                document.querySelector(el) :
-                null);
+        // console.log(' ====> getArgtype(el)', getArgtype(el))
+
+        let elements = {}
+        if (getArgtype(el) === 'string') {
+            // console.log(' ====> el string', el)
+            elements[el] = document.querySelector(`${el}`)
+            // console.log(' ====> elements', elements)
+
+        }
+        if (getArgtype(el) === 'array') {
+            // console.log(' ====> el array', JSON.stringify(el))
+            el.forEach(item => {
+                elements[item] = document.querySelector(item)
+            })
+        }
+        // console.log(' ====> elements', JSON.stringify(elements))
+        return elements
     }
 
     function includeElement(elements, node) {
@@ -103,28 +127,28 @@ function evalDOM() {
         return customCardBlock;
     }
 
-    function calcTextWidth(text, { fontSize, fontWeight }) {
-        if (!text) return 0;
+    // function calcTextWidth(text, { fontSize, fontWeight }) {
+    //     if (!text) return 0;
 
-        const div = document.createElement('div');
-        div.innerHTML = text;
-        div.style.cssText = [
-            'position:absolute',
-            'left:-99999px',
-            `height:${fontSize}`,
-            `font-size:${fontSize}`,
-            `font-weight:${fontWeight}`,
-            'opacity:0'
-        ].join(';');
-        document.body.appendChild(div);
-        const w = getStyle(div, 'width');
-        const h = getStyle(div, 'height');
-        document.body.removeChild(div);
-        return {
-            w: parseInt(w),
-            h: parseInt(h)
-        };
-    }
+    //     const div = document.createElement('div');
+    //     div.innerHTML = text;
+    //     div.style.cssText = [
+    //         'position:absolute',
+    //         'left:-99999px',
+    //         `height:${fontSize}`,
+    //         `font-size:${fontSize}`,
+    //         `font-weight:${fontWeight}`,
+    //         'opacity:0'
+    //     ].join(';');
+    //     document.body.appendChild(div);
+    //     const w = getStyle(div, 'width');
+    //     const h = getStyle(div, 'height');
+    //     document.body.removeChild(div);
+    //     return {
+    //         w: parseInt(w),
+    //         h: parseInt(h)
+    //     };
+    // }
 
     function getRect(node) {
         if (!node) return {};
@@ -142,12 +166,17 @@ function evalDOM() {
     }
 
     function createCommonClass(props) {
-        const inlineStyle = ['<style>._{'];
+        const item = [];
+        const style = []
+        // console.log(' ====> class props', JSON.stringify(props))
         for (let prop in props) {
-            inlineStyle.push(`${prop === 'zIndex' ? 'z-index' : prop}:${props[prop]};`);
+            item.push(`\t${prop === 'zIndex' ? 'z-index' : prop}:${props[prop]};\n`);
         }
-        inlineStyle.push('}.__{top:0%;left:0%;width:100%;}</style>');
-        blocks.push(inlineStyle.join(''));
+        style.push(`\n.skeleton_item{\n${item.join('')}}\n`)
+        style.push('.skeleton_content{\n\ttop:0%;\n\tleft:0%;\n\twidth:100%;\n\tposition:fixed;\n\tz-index:990;}\n\t')
+
+        // console.log(' ====> css', JSON.stringify(css))
+        css = style.join('')
     }
 
     function parseAgrs(agrs = []) {
@@ -157,7 +186,7 @@ function evalDOM() {
             const [appName, name, type] = agr.slice(0, sep).split('-');
             const val = agr.slice(sep + 1);
             params[name] = type === 'function' ? eval('(' + val + ')') :
-                type === 'object' ? JSON.parse(val) :
+                (type === 'object' || type === 'array') ? JSON.parse(val) :
                     val;
         });
         return params;
@@ -169,23 +198,15 @@ function evalDOM() {
         includeElement: any;
         init: any;
         originStyle: any
+        index: number
         constructor(opts) {
 
-
-
             this.rootNode = getRootNode(opts.rootNode) || document.body;
-
-            // console.log(' ======> this.rootNode', JSON.stringify(this.rootNode))
-
-            // console.log(' ======> getRootNode(opts.rootNode)', JSON.stringify(getRootNode(opts.rootNode)))
-
-
-            // console.log(' ======> document.body', JSON.stringify(document.body))
-
             this.offsetTop = opts.offsetTop || 0;
             this.includeElement = opts.includeElement;
             this.init = opts.init;
             this.originStyle = {};
+            this.index = 1
         }
 
         resetDOM() {
@@ -214,14 +235,13 @@ function evalDOM() {
             }
         }
         withHeader() {
-
             console.log(' ========> agrs.header', agrs.header)
-
             if (agrs.header) {
                 const { height, background } = agrs.header;
                 const hHeight = parseInt(height);
                 const hBackground = background || agrs.background;
                 if (hHeight) {
+                    this.index++
                     drawBlock({
                         height: Number(hPercent(hHeight)),
                         zIndex: 999,
@@ -232,53 +252,54 @@ function evalDOM() {
             }
         }
         showBlocks() {
-            if (blocks.length) {
-                const { body } = document;
-                const blocksHTML = blocks.join('');
-                const div = document.createElement('div');
-                div.innerHTML = blocksHTML;
-                body.appendChild(div);
+            const keys = Object.keys(blocks);
+            if (keys.length) {
+                const blocksHTML = {}
+                keys.forEach(item => {
+                    blocksHTML[item] = blocks[item].join('')
+                })
+                // const { body } = document;
+                // const blocksHTML = blocks.join('');
+                // const div = document.createElement('div');
+                // div.innerHTML = blocksHTML;
+                // body.appendChild(div);
 
-                window.scrollTo(0, this.originStyle.scrollTop);
-                document.body.style.overflow = this.originStyle.bodyOverflow;
+                // window.scrollTo(0, this.originStyle.scrollTop);
+                // document.body.style.overflow = this.originStyle.bodyOverflow;
 
-                return blocksHTML;
+                return { html: blocksHTML, css };
             }
         }
 
         startDraw() {
             const $this = this;
-            this.resetDOM();
-            const nodes = this.rootNode.childNodes;
 
-            // console.log(' =======> nodes ', JSON.stringify(nodes))
+
 
             function deepFindNode(nodes) {
                 if (nodes.length) {
                     for (let i = 0; i < nodes.length; i++) {
-
                         let node = nodes[i];
                         if (isHideStyle(node) || (getArgtype($this.includeElement) === 'function' && $this.includeElement(node, drawBlock) == false)) continue;
                         let childNodes = node.childNodes;
                         let hasChildText = false;
                         let background = getStyle(node, 'backgroundImage');
                         let backgroundHasurl: any = background.match(/url\(.+?\)/);
-
                         backgroundHasurl = backgroundHasurl && backgroundHasurl.length;
-
                         for (let j = 0; j < childNodes.length; j++) {
                             if (childNodes[j].nodeType === 3 && childNodes[j].textContent.trim().length) {
                                 hasChildText = true;
                                 break;
                             }
                         }
-
-                        if ((includeElement(ELEMENTS, node) ||
-                            backgroundHasurl ||
-                            (node.nodeType === 3 && node.textContent.trim().length) || hasChildText ||
-                            isCustomCardBlock(node)) && !$this.inHeader(node)) {
+                        if ((includeElement(ELEMENTS, node)
+                            || backgroundHasurl
+                            || (node.nodeType === 3 && node.textContent.trim().length)
+                            || hasChildText
+                            || isCustomCardBlock(node)
+                        )
+                            && !$this.inHeader(node)) {
                             const { t, l, w, h } = getRect(node);
-
                             if (w > 0 && h > 0 && l >= 0 && l < win_w && t < win_h - 100 && t >= 0) {
                                 const {
                                     paddingTop,
@@ -286,6 +307,7 @@ function evalDOM() {
                                     paddingBottom,
                                     paddingRight
                                 } = getPadding(node);
+                                this.index++
                                 drawBlock({
                                     width: Number(wPercent(w - paddingLeft - paddingRight)),
                                     height: Number(hPercent(h - paddingTop - paddingBottom)),
@@ -302,7 +324,22 @@ function evalDOM() {
                     }
                 }
             }
-            deepFindNode(nodes);
+
+
+            console.log(' ====> this.rootNode', `${this.rootNode}`)
+
+            // const keys = Object.keys(this.rootNode)
+            // console.log(' ====> ', JSON.stringify(keys))
+
+            Object.keys(this.rootNode).forEach(item => {
+                blocks[item] = []
+                block_key = item
+                this.resetDOM();
+                const value = this.rootNode[item]
+                deepFindNode(value.childNodes);
+            })
+            // return
+            // const nodes = this.rootNode.childNodes;
             return this.showBlocks();
         }
     }

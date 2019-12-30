@@ -36,10 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-var ppteer = require('fast-install-puppeteer');
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var ppteer = require('puppeteer');
+var chalk = require('chalk');
 // const { log, getAgrType } = require('./utils');
-var Utils = require("./utils");
+var Utils = __importStar(require("./utils"));
 var devices = {
     mobile: [375, 667, 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'],
     ipad: [1024, 1366, 'Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1'],
@@ -63,7 +71,19 @@ function pp(_a) {
                             page.setUserAgent(deviceSet[2]);
                             page.setViewport({ width: deviceSet[0], height: deviceSet[1] });
                             page.on('console', function (msg) {
-                                console.log('PAGE LOG:', msg.text());
+                                console.log('PAGE LOG: console =>', msg.text());
+                            });
+                            page.on('pagerror', function (msg) {
+                                console.log('PAGE LOG: pagerror =>', msg);
+                            });
+                            page.on('error', function (msg) {
+                                console.log('PAGE LOG: error =>', msg);
+                            });
+                            page.on('request', function (msg) {
+                                // console.log('PAGE LOG: request =>', msg)
+                            });
+                            page.on('response', function (msg) {
+                                // console.log('PAGE LOG: response =>', msg)
                             });
                             if (!(extraHTTPHeaders && Utils.getAgrType(extraHTTPHeaders) === 'object')) return [3 /*break*/, 4];
                             return [4 /*yield*/, page.setExtraHTTPHeaders(new Map(Object.entries(extraHTTPHeaders)))];
@@ -80,7 +100,7 @@ function pp(_a) {
                         case 6:
                             e_1 = _a.sent();
                             console.log('\n');
-                            Utils.log.error(e_1.message);
+                            console.log(chalk.red("puppeteer err [" + e_1 + "] "));
                             return [3 /*break*/, 7];
                         case 7: return [2 /*return*/, page];
                     }
@@ -101,7 +121,7 @@ function pp(_a) {
         });
     });
 }
-exports["default"] = pp;
+exports.default = pp;
 ;
 // const ppteer = require('puppeteer');
 // // const { log, getAgrType } = require('./utils');

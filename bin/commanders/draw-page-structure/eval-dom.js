@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 function evalDOM() {
     var ELEMENTS = ['audio', 'button', 'canvas', 'code', 'img', 'input', 'pre', 'svg', 'textarea', 'video', 'xmp'];
     /** 存放标签 */
-    var blocks = [];
+    var blocks = {};
+    var block_key = '';
+    var css = '';
     var win_w = window.innerWidth;
     var win_h = window.innerHeight;
     var agrs = arguments;
@@ -26,18 +28,22 @@ function evalDOM() {
     createCommonClass(classProps);
     function drawBlock(_a) {
         var _b = _a === void 0 ? {} : _a, _c = _b.width, width = _c === void 0 ? 0 : _c, _d = _b.height, height = _d === void 0 ? 0 : _d, _e = _b.top, top = _e === void 0 ? 0 : _e, _f = _b.left, left = _f === void 0 ? 0 : _f, _g = _b.zIndex, zIndex = _g === void 0 ? 999 : _g, _h = _b.background, background = _h === void 0 ? agrs.background : _h, _j = _b.radius, radius = _j === void 0 ? '' : _j, _k = _b.subClas, subClas = _k === void 0 ? false : _k;
-        var styles = ['height:' + height + '%'];
+        var styles = ["height: \"" + height + "%\""];
         if (!subClas) {
-            styles.push('top:' + top + '%', 'left:' + left + '%', 'width:' + width + '%');
+            styles.push("top: \"" + top + "%\", left: \"" + left + "%\", width: \"" + width + "%\"");
         }
         if (classProps.zIndex !== zIndex) {
-            styles.push('z-index:' + zIndex);
+            styles.push('zIndex:' + zIndex);
         }
         if (classProps.background !== background) {
-            styles.push('background:' + background);
+            styles.push("backgroundColor: \"" + background + "\"");
         }
-        radius && radius != '0px' && styles.push('border-radius:' + radius);
-        blocks.push("<div class=\"_" + (subClas ? ' __' : '') + "\" style=\"" + styles.join(';') + "\"></div>");
+        radius && radius != '0px' && styles.push("borderRadius: \"" + radius + "\"");
+        // const block_value = blocks[block_key]
+        var _html = "<div className=" + (subClas ? "{`${Styles.skeleton_content}`}" : "{`${Styles.skeleton_item}`}") + " style={{" + styles.join(',') + "}}></div>\n";
+        console.log(' ===> ');
+        blocks[block_key].push(_html);
+        // blocks[block_key] = block_value ? block_value.push(_html) : [_html];
     }
     function wPercent(x) {
         return parseFloat(String(x / win_w * 100)).toFixed(3);
@@ -53,14 +59,23 @@ function evalDOM() {
         return (node.nodeType === 1 ? getComputedStyle(node)[attr] : '') || '';
     }
     function getRootNode(el) {
-        console.log(' =====> getRootNode', el);
         if (!el)
             return el;
-        return typeof el === 'object' ?
-            el :
-            (getArgtype(el) === 'string' ?
-                document.querySelector(el) :
-                null);
+        // console.log(' ====> getArgtype(el)', getArgtype(el))
+        var elements = {};
+        if (getArgtype(el) === 'string') {
+            // console.log(' ====> el string', el)
+            elements[el] = document.querySelector("" + el);
+            // console.log(' ====> elements', elements)
+        }
+        if (getArgtype(el) === 'array') {
+            // console.log(' ====> el array', JSON.stringify(el))
+            el.forEach(function (item) {
+                elements[item] = document.querySelector(item);
+            });
+        }
+        // console.log(' ====> elements', JSON.stringify(elements))
+        return elements;
     }
     function includeElement(elements, node) {
         return ~elements.indexOf((node.tagName || '').toLowerCase());
@@ -83,29 +98,27 @@ function evalDOM() {
         var customCardBlock = !!(hasBgColor && (!hasNoBorder || getStyle(node, 'box-shadow') != 'none') && w > 0 && h > 0 && w < 0.95 * win_w && h < 0.3 * win_h);
         return customCardBlock;
     }
-    function calcTextWidth(text, _a) {
-        var fontSize = _a.fontSize, fontWeight = _a.fontWeight;
-        if (!text)
-            return 0;
-        var div = document.createElement('div');
-        div.innerHTML = text;
-        div.style.cssText = [
-            'position:absolute',
-            'left:-99999px',
-            "height:" + fontSize,
-            "font-size:" + fontSize,
-            "font-weight:" + fontWeight,
-            'opacity:0'
-        ].join(';');
-        document.body.appendChild(div);
-        var w = getStyle(div, 'width');
-        var h = getStyle(div, 'height');
-        document.body.removeChild(div);
-        return {
-            w: parseInt(w),
-            h: parseInt(h)
-        };
-    }
+    // function calcTextWidth(text, { fontSize, fontWeight }) {
+    //     if (!text) return 0;
+    //     const div = document.createElement('div');
+    //     div.innerHTML = text;
+    //     div.style.cssText = [
+    //         'position:absolute',
+    //         'left:-99999px',
+    //         `height:${fontSize}`,
+    //         `font-size:${fontSize}`,
+    //         `font-weight:${fontWeight}`,
+    //         'opacity:0'
+    //     ].join(';');
+    //     document.body.appendChild(div);
+    //     const w = getStyle(div, 'width');
+    //     const h = getStyle(div, 'height');
+    //     document.body.removeChild(div);
+    //     return {
+    //         w: parseInt(w),
+    //         h: parseInt(h)
+    //     };
+    // }
     function getRect(node) {
         if (!node)
             return {};
@@ -121,12 +134,16 @@ function evalDOM() {
         };
     }
     function createCommonClass(props) {
-        var inlineStyle = ['<style>._{'];
+        var item = [];
+        var style = [];
+        // console.log(' ====> class props', JSON.stringify(props))
         for (var prop in props) {
-            inlineStyle.push((prop === 'zIndex' ? 'z-index' : prop) + ":" + props[prop] + ";");
+            item.push("\t" + (prop === 'zIndex' ? 'z-index' : prop) + ":" + props[prop] + ";\n");
         }
-        inlineStyle.push('}.__{top:0%;left:0%;width:100%;}</style>');
-        blocks.push(inlineStyle.join(''));
+        style.push("\n.skeleton_item{\n" + item.join('') + "}\n");
+        style.push('.skeleton_content{\n\ttop:0%;\n\tleft:0%;\n\twidth:100%;\n\tposition:fixed;\n\tz-index:990;}\n\t');
+        // console.log(' ====> css', JSON.stringify(css))
+        css = style.join('');
     }
     function parseAgrs(agrs) {
         if (agrs === void 0) { agrs = []; }
@@ -136,7 +153,7 @@ function evalDOM() {
             var _a = agr.slice(0, sep).split('-'), appName = _a[0], name = _a[1], type = _a[2];
             var val = agr.slice(sep + 1);
             params[name] = type === 'function' ? eval('(' + val + ')') :
-                type === 'object' ? JSON.parse(val) :
+                (type === 'object' || type === 'array') ? JSON.parse(val) :
                     val;
         });
         return params;
@@ -145,13 +162,11 @@ function evalDOM() {
         function DrawPageframe(opts) {
             this.offsetTop = 0;
             this.rootNode = getRootNode(opts.rootNode) || document.body;
-            console.log(' ======> this.rootNode', JSON.stringify(this.rootNode));
-            console.log(' ======> getRootNode(opts.rootNode)', JSON.stringify(getRootNode(opts.rootNode)));
-            console.log(' ======> document.body', JSON.stringify(document.body));
             this.offsetTop = opts.offsetTop || 0;
             this.includeElement = opts.includeElement;
             this.init = opts.init;
             this.originStyle = {};
+            this.index = 1;
         }
         DrawPageframe.prototype.resetDOM = function () {
             this.init && this.init();
@@ -185,6 +200,7 @@ function evalDOM() {
                 var hHeight = parseInt(height);
                 var hBackground = background || agrs.background;
                 if (hHeight) {
+                    this.index++;
                     drawBlock({
                         height: Number(hPercent(hHeight)),
                         zIndex: 999,
@@ -195,22 +211,25 @@ function evalDOM() {
             }
         };
         DrawPageframe.prototype.showBlocks = function () {
-            if (blocks.length) {
-                var body = document.body;
-                var blocksHTML = blocks.join('');
-                var div = document.createElement('div');
-                div.innerHTML = blocksHTML;
-                body.appendChild(div);
-                window.scrollTo(0, this.originStyle.scrollTop);
-                document.body.style.overflow = this.originStyle.bodyOverflow;
-                return blocksHTML;
+            var keys = Object.keys(blocks);
+            if (keys.length) {
+                var blocksHTML_1 = {};
+                keys.forEach(function (item) {
+                    blocksHTML_1[item] = blocks[item].join('');
+                });
+                // const { body } = document;
+                // const blocksHTML = blocks.join('');
+                // const div = document.createElement('div');
+                // div.innerHTML = blocksHTML;
+                // body.appendChild(div);
+                // window.scrollTo(0, this.originStyle.scrollTop);
+                // document.body.style.overflow = this.originStyle.bodyOverflow;
+                return { html: blocksHTML_1, css: css };
             }
         };
         DrawPageframe.prototype.startDraw = function () {
+            var _this = this;
             var $this = this;
-            this.resetDOM();
-            var nodes = this.rootNode.childNodes;
-            console.log(' =======> nodes ', JSON.stringify(nodes));
             function deepFindNode(nodes) {
                 if (nodes.length) {
                     for (var i = 0; i < nodes.length; i++) {
@@ -228,13 +247,16 @@ function evalDOM() {
                                 break;
                             }
                         }
-                        if ((includeElement(ELEMENTS, node) ||
-                            backgroundHasurl ||
-                            (node.nodeType === 3 && node.textContent.trim().length) || hasChildText ||
-                            isCustomCardBlock(node)) && !$this.inHeader(node)) {
+                        if ((includeElement(ELEMENTS, node)
+                            || backgroundHasurl
+                            || (node.nodeType === 3 && node.textContent.trim().length)
+                            || hasChildText
+                            || isCustomCardBlock(node))
+                            && !$this.inHeader(node)) {
                             var _a = getRect(node), t = _a.t, l = _a.l, w = _a.w, h = _a.h;
                             if (w > 0 && h > 0 && l >= 0 && l < win_w && t < win_h - 100 && t >= 0) {
                                 var _b = getPadding(node), paddingTop = _b.paddingTop, paddingLeft = _b.paddingLeft, paddingBottom = _b.paddingBottom, paddingRight = _b.paddingRight;
+                                this.index++;
                                 drawBlock({
                                     width: Number(wPercent(w - paddingLeft - paddingRight)),
                                     height: Number(hPercent(h - paddingTop - paddingBottom)),
@@ -252,7 +274,18 @@ function evalDOM() {
                     }
                 }
             }
-            deepFindNode(nodes);
+            console.log(' ====> this.rootNode', "" + this.rootNode);
+            // const keys = Object.keys(this.rootNode)
+            // console.log(' ====> ', JSON.stringify(keys))
+            Object.keys(this.rootNode).forEach(function (item) {
+                blocks[item] = [];
+                block_key = item;
+                _this.resetDOM();
+                var value = _this.rootNode[item];
+                deepFindNode(value.childNodes);
+            });
+            // return
+            // const nodes = this.rootNode.childNodes;
             return this.showBlocks();
         };
         return DrawPageframe;
@@ -273,7 +306,7 @@ function evalDOM() {
         }, 1000);
     });
 }
-exports["default"] = evalDOM;
+exports.default = evalDOM;
 // 待优化：
 // 1. table
 // 2. 文字

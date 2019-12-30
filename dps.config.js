@@ -1,10 +1,11 @@
 
 const dpsConfig = {
-	url: 'http://rydev.com:8989/',      // 待生成骨架屏页面的地址，用百度（https://baidu.com）试试也可以
-	output: {
-		filepath: '/Users/bank/Desktop/ry-react-ts/src',   // 生成骨架屏的存放页面，一般为项目的入口页面
-		injectSelector: '#app'  // 生成的骨架屏插入页面的节点
-	},
+	url: 'http://rydev.com:3000/login',      // 待生成骨架屏页面的地址，用百度（https://baidu.com）试试也可以
+	rootNode: ['#login-header', '#login-input-info'],
+	// output: {
+	// 	filepath: '/Users/bank/Desktop/ry-react-ts/src',   // 生成骨架屏的存放页面，一般为项目的入口页面
+	// 	injectSelector: '#app'  // 生成的骨架屏插入页面的节点
+	// },
 	// header: {
 	// 	height: 40,
 	// 	background: '#1b9af4'

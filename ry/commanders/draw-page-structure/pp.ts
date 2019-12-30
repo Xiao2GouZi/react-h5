@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const ppteer = require('puppeteer');
+const chalk = require('chalk');
 
 // const { log, getAgrType } = require('./utils');
 import * as Utils from './utils'
@@ -22,8 +23,24 @@ export default async function pp({device = 'mobile', headless = true}) {
       page.setViewport({width: deviceSet[0], height: deviceSet[1]});
 
       page.on('console', msg => {
-        console.log('PAGE LOG:', msg.text())
+        console.log('PAGE LOG: console =>', msg.text())
       });
+
+      page.on('pagerror', msg => {
+        console.log('PAGE LOG: pagerror =>', msg)
+      })
+
+      page.on('error', msg => {
+        console.log('PAGE LOG: error =>', msg)
+      })
+
+      page.on('request', msg => {
+        // console.log('PAGE LOG: request =>', msg)
+      })
+
+      page.on('response', msg => {
+        // console.log('PAGE LOG: response =>', msg)
+      })
 
 
       if(extraHTTPHeaders && Utils.getAgrType(extraHTTPHeaders) === 'object') {
@@ -35,7 +52,7 @@ export default async function pp({device = 'mobile', headless = true}) {
       });
     }catch(e){
       console.log('\n');
-      Utils.log.error(e.message);
+      console.log(chalk.red(`puppeteer err [${e}] `))
     }
     return page;
   }

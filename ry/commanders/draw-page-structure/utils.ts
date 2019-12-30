@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk');
 const ora = require('ora');
 const emoji = require('node-emoji');
 
@@ -26,23 +25,6 @@ function calcText(str) {
       return str.slice(0, 15) + '...' + (str.match(/([\/\\][^\/\\]+)$/) || ['', ''])[1];
   }
   return str;
-}
-
-function log(msg: any) {
-  console.log.apply(console, arguments);
-}
-
-log.error = function(msg, exit = 0) {
-  log(chalk.gray(`[${appName}]:`, chalk.red(msg)));
-  exit && process.exit(0);
-}
-
-log.warn = function(msg) {
-  log(chalk.yellow(msg));
-}
-
-log.info = function(msg) {
-  log(chalk.greenBright(msg));
 }
 
 function getAgrType(agr) {
@@ -73,7 +55,6 @@ emoji.get = function() {
 }
 
 export {
-    log,
     calcText,
     getAgrType,
     Spinner,
@@ -82,10 +63,4 @@ export {
 }
 
 
-// exports.log = log;
-// exports.calcText = calcText;
-// exports.getAgrType = getAgrType;
-// exports.Spinner = Spinner;
-// exports.emoji = emoji;
-// exports.genArgs = genArgs;
 

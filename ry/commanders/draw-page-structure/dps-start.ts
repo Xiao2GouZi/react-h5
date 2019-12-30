@@ -3,10 +3,11 @@
 const fsExtra = require('fs-extra')
 const path = require('path');
 const cheerio = require('cheerio');
+const chalk = require('chalk');
 
 
 import * as Utils from './utils'
-import DefConf from './default.config'
+import * as DefConf from './default.config'
 import EvalScripts from './eval-dom'
 import PPTeer from './pp'
 import DefaultHtml from './default.html'
@@ -20,7 +21,7 @@ const currDir = process.cwd();
 
 interface IProps {
     url: string,
-    output: any,
+    targetFile: string,
     background: string,
     animation: string,
     rootNode: string,
@@ -28,7 +29,7 @@ interface IProps {
     device: string,
     headless: boolean,
     extraHTTPHeaders: string,
-    writePageStructure: string,
+    writePageStructure: (html: { [key: string]: string }, filepath: string) => void,
     includeElement: string,
     init: string
 }
@@ -36,23 +37,21 @@ interface IProps {
 class DrawPageStructure {
     url: string;
     filepath: string;
-    injectSelector: string;
     background: string;
     animation: string;
-    rootNode: string;
+    rootNode: string | string[];
     header: string;
     device: string;
     headless: boolean;
     extraHTTPHeaders: any;
-    writePageStructure: any;
+    writePageStructure: (html: { [key: string]: string }, filepath: string) => void;
     includeElement: any;
     init: any
     constructor(props: IProps) {
-        const { url, output, background, animation, rootNode, header, device, headless, extraHTTPHeaders, writePageStructure, includeElement, init } = props
-        // let filepath = !output.filepath || path.isAbsolute(output.filepath) ? output.filepath : path.join(currDir, output.filepath);
+        const { url, targetFile, background, animation, rootNode, header, device, headless, extraHTTPHeaders, writePageStructure, includeElement, init } = props
         this.url = url;
-        this.filepath = !output.filepath || path.isAbsolute(output.filepath) ? output.filepath : path.join(currDir, output.filepath);
-        this.injectSelector = output.injectSelector || 'body';
+        this.filepath = targetFile;
+        // this.injectSelector = "app" || 'body';
         this.background = background || '#ecf0f2';
         this.animation = animation || '';
         this.rootNode = rootNode || '';
@@ -68,30 +67,16 @@ class DrawPageStructure {
         if (this.headless === undefined) this.headless = true;
 
         if (!url) {
-            Utils.log.error('please provide entry url !', 1);
+            console.log(chalk.red('please provide entry url !'))
         }
-        // if(!output.filepath) {
-        //   log.error('please provide output filepath !', 1); 
-        // }
         if (header && Utils.getAgrType(header) !== 'object') {
-            Utils.log.error('[header] should be an object !', 1);
+            console.log(chalk.red('[header] should be an object !'))
         }
 
-        if (this.filepath) {
-            if (!fsExtra.existsSync(this.filepath)) {
-                Utils.log.error('[output.filepath:404] please provide the output filepath !', 1);
-            } else {
-                const fileStat = fsExtra.statSync(this.filepath);
-                if (fileStat.isDirectory()) {
-                    this.filepath = path.join(this.filepath, 'index.html');
-                    fsExtra.writeFileSync(this.filepath, DefaultHtml);
-                    this.filepath = this.filepath;
-                }
-            }
-        }
+
     }
-    async generateSkeletonHTML(page) {
-        let html = '';
+    async generateSkeletonHTML(page): Promise<{ css: string, html: { [key: string]: string } }> {
+        let html = { css: '', html: {} };
 
         try {
             // html = await page.evaluate.call(
@@ -104,7 +89,7 @@ class DrawPageStructure {
             //   this.rootNode,
             //   this.header
             // );
-            const agrs = Utils.genArgs.create({
+            let genArgs = {
                 init: {
                     type: 'function',
                     value: this.init.toString()
@@ -129,25 +114,46 @@ class DrawPageStructure {
                     type: 'object',
                     value: JSON.stringify(this.header)
                 }
-            });
+            }
+            if (Utils.getAgrType(this.rootNode) === 'array') {
+                genArgs.rootNode.value = JSON.stringify(this.rootNode)
+                genArgs.rootNode.type = 'array'
+            }
+            const agrs = Utils.genArgs.create(genArgs);
             agrs.unshift(EvalScripts as any);
-
             html = await page.evaluate.apply(page, agrs);
-
         } catch (e) {
-            Utils.log.error('\n[page.evaluate] ' + e.message);
+            console.log(chalk.red('\n[page.evaluate] ' + e.message))
         }
+        console.log(' ====> html', html)
         return html;
 
     }
     writeToFilepath(filepath, html) {
-        let fileHTML = fsExtra.readFileSync(filepath);
-        let $ = cheerio.load(fileHTML, {
-            decodeEntities: false
-        });
-        $(this.injectSelector).html(html);
-        fsExtra.writeFileSync(filepath, $.html('html'));
+        try {
+            let fileHTML = fsExtra.readFileSync(`${filepath}/index.tsx`, 'utf-8');
+            const start = fileHTML.indexOf('><') + 1
+            let targetHtml = `${fileHTML.slice(0, start)}\n${html}${fileHTML.slice(start)}`
+            // console.log(' ====> targetHtml', targetHtml)
+            fsExtra.writeFileSync(`${filepath}/index.tsx`, targetHtml);
+            console.log(chalk.green(` write html success`))
+        } catch (error) {
+            console.log(chalk.red(` write html fail ${error}`))
+        }
     }
+
+    writeCss(filepath, css) {
+        const walkingPath = path.join(__dirname, "../../", 'walking/structure/index.module.less')
+        try {
+            let fileCss = fsExtra.readFileSync(walkingPath, 'utf-8');
+            fsExtra.writeFileSync(`${filepath}/index.module.less`, fileCss + css);
+            console.log(chalk.green(` write css success`))
+        } catch (error) {
+            console.log(chalk.red(` write css fail`))
+        }
+    }
+
+
     async start() {
         const pageUrl = this.url;
         const spinner = Utils.Spinner('magentaBright');
@@ -158,36 +164,41 @@ class DrawPageStructure {
             headless: this.headless
         });
 
-        // console.log(' =======> pp', pp)
-
         spinner.text = `正在打开页面：${pageUrl}...`;
         const page = await pp.openPage(pageUrl, this.extraHTTPHeaders);
 
-        // console.log(' ======> page', page.evaluate)
-
         spinner.text = '正在生成骨架屏...';
         const html = await this.generateSkeletonHTML(page);
+
         const userWrite = Utils.getAgrType(this.writePageStructure) === 'function';
 
         if (userWrite) {
-            this.writePageStructure(html, this.filepath);
+            this.writePageStructure(html.html, this.filepath);
         }
-
-        if (this.filepath) {
-            this.writeToFilepath(this.filepath, html);
-        }
-
-        if (!userWrite && !this.filepath) {
-            const defaultPage = path.join(currDir, 'index.html');
-            fsExtra.writeFileSync(defaultPage, DefaultHtml);
-            this.writeToFilepath(defaultPage, html);
-            this.filepath = defaultPage;
-            spinner.clear();
-            Utils.log.warn(`\nskeleton has created in a default page: ${defaultPage}`);
-        }
-
+        // console.log(' ====> ', JSON.stringify(Object.keys(html.html)))
+        // console.log(' ====> ', this.filepath)
+        Object.keys(html.html).forEach(item => {
+            const _item = item.replace("#", "")
+            /** 把默认文件copy指定目录 */
+            const walkingPath = path.join(__dirname, "../../", 'walking/structure')
+            try {
+                const _targetFile = `${this.filepath}/${_item}`
+                if (!fsExtra.existsSync(_targetFile)) {
+                    console.log(chalk.yellow(` target file path:404 [${_targetFile}]`))
+                    console.log(chalk.green(` target file path create ...`))
+                    fsExtra.ensureDirSync(_targetFile)
+                    console.log(chalk.green(` target file path create success`))
+                }
+                console.log(chalk.green(` copy file start`))
+                fsExtra.copySync(`${walkingPath}/`, _targetFile)
+                console.log(chalk.green(` copy file start success`))
+                this.writeToFilepath(_targetFile, html.html[item]);
+                this.writeCss(_targetFile, html.css)
+            } catch (error) {
+                console.log(chalk.red(`copy walking structure err ${error}`))
+            }
+        })
         spinner.clear().succeed(`skeleton screen has created and output to ${Utils.calcText(this.filepath)}`);
-
         if (this.headless) {
             await pp.browser.close();
             process.exit(0);
@@ -198,15 +209,33 @@ class DrawPageStructure {
 
 
 function getDpsconfig() {
-    const dpsConfFile = resolveCwd(DefConf.filename)
+    const dpsConfFile = resolveDir(DefConf.filename)
+    console.log(' =====> ', dpsConfFile)
     if (!fsExtra.existsSync(dpsConfFile)) {
-        return Utils.log.error(`please run 'dps init' to initialize a config file`, 1)
+        return console.log(chalk.red(`please run 'dps init' to initialize a config file`))
     }
     return require(dpsConfFile);
 }
 
 export default function DpsStatr() {
     const dpsConfig = getDpsconfig()
-    console.log(' ======> dpsConfig', dpsConfig)
+    console.log(chalk.green(` dps defalut config`), dpsConfig)
+    const targetFile = resolveCwd('components/skeleton')
+    try {
+        if (!fsExtra.existsSync(targetFile)) {
+            console.log(chalk.yellow(` target file path:404 [${targetFile}]`))
+            console.log(chalk.green(` target file path create ...`))
+            fsExtra.ensureDirSync(targetFile)
+            console.log(chalk.green(` target file path create success`))
+        }
+        if (!fsExtra.statSync(targetFile).isDirectory()) {
+            console.log(chalk.red(` target file path exist and not directory`))
+            return
+        }
+    } catch (error) {
+        console.log(chalk.red(` target file path create fail [${error}]`))
+    }
+    console.log(chalk.green(` target file path [${targetFile}]`))
+    dpsConfig.targetFile = targetFile
     new DrawPageStructure(dpsConfig).start()
 }

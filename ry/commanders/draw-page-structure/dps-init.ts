@@ -4,46 +4,36 @@ const path = require('path')
 const fsExtra = require('fs-extra')
 const prompts = require('prompts')
 
-import DefConf from './default.config'
-import * as Utils from './utils'
+import * as DefConf from './default.config'
+// import * as Utils from './utils'
 
 const resolveDir = dir => path.join(__dirname, "../../../", dir);
 const resolveCwd = dir => path.resolve(process.cwd(), dir);
 
-
-// const currDir = process.cwd()
-
-function dpsInit() {
-    console.log(' ======> currDir')
-    const dpsConfFile = resolveCwd(DefConf.filename) 
+async function dpsInit() {
+    const dpsConfFile = resolveDir(DefConf.filename)
     if (fsExtra.existsSync(dpsConfFile)) {
-        return console.log(`\n[${DefConf.filename}] had been created! you can edit it and then run 'dps start'\n`)
+        return console.log(`\n[${DefConf.filename}] had been created! you can edit it and then run 'ry dps:start'\n`)
     }
-    askForConfig().then(({ url, filepath }) => {
-        const outputPath = filepath ? resolveCwd(filepath).replace(/\\/g, '\\\\') : '';
-        prompts({
-            type: 'toggle',
-            name: 'value',
-            message: `Are you sure to create skeleton screen base on ${url}. \n and will output to ${Utils.calcText(outputPath)}`,
-            initial: true,
-            active: 'Yes',
-            inactive: 'no'
-        }).then(res => {
-            if (res.value) {
-                fsExtra.writeFile(
-                    resolveCwd(DefConf.filename),
-                    DefConf.getTemplate({
-                        url: url,
-                        filepath: outputPath
-                    }),
-                    err => {
-                        if (err) throw err;
-                        console.log(`\n[${DefConf.filename}] had been created! now, you can edit it and then run 'dps start'\n`)
-                    }
-                )
+    const { url } = await askForConfig()
+    const { value } = await prompts({
+        type: 'toggle',
+        name: 'value',
+        message: `Are you sure to create skeleton screen base on ${url}.`,
+        initial: true,
+        active: 'Yes',
+        inactive: 'no'
+    })
+    if (value) {
+        fsExtra.writeFile(
+            resolveDir(DefConf.filename),
+            DefConf.config(url),
+            err => {
+                if (err) throw err;
+                console.log(`\n[${DefConf.filename}] had been created! now, you can edit it and then run 'ry dps:start'\n`)
             }
-        })
-    });
+        )
+    }
 }
 
 
@@ -60,20 +50,6 @@ function askForConfig() {
                 }
 
                 return 'Please enter a valid url';
-            }
-        },
-        {
-            type: 'text',
-            name: 'filepath',
-            message: "Enter a relative output filepath ? (optional)",
-            validate: function (value) {
-                const filepath = path.isAbsolute(value) ? value : resolveDir(value);
-                console.log(' =====> filepath', filepath)
-                const exists = fsExtra.existsSync(filepath);
-                if (value && !exists) {
-                    return 'Please enter a exists target';
-                }
-                return true;
             }
         }
     ];

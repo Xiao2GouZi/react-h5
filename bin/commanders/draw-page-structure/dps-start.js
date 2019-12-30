@@ -36,26 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 var fsExtra = require('fs-extra');
 var path = require('path');
 var cheerio = require('cheerio');
-// const EvalScripts = require('./eval-dom2');
-var Utils = require("./utils");
-var default_config_1 = require("./default.config");
-var eval_dom_1 = require("./eval-dom");
-var pp_1 = require("./pp");
-var default_html_1 = require("./default.html");
+var chalk = require('chalk');
+var Utils = __importStar(require("./utils"));
+var DefConf = __importStar(require("./default.config"));
+var eval_dom_1 = __importDefault(require("./eval-dom"));
+var pp_1 = __importDefault(require("./pp"));
 var resolveDir = function (dir) { return path.join(__dirname, "../../../", dir); };
 var resolveCwd = function (dir) { return path.resolve(process.cwd(), dir); };
 var currDir = process.cwd();
 var DrawPageStructure = /** @class */ (function () {
     function DrawPageStructure(props) {
-        var url = props.url, output = props.output, background = props.background, animation = props.animation, rootNode = props.rootNode, header = props.header, device = props.device, headless = props.headless, extraHTTPHeaders = props.extraHTTPHeaders, writePageStructure = props.writePageStructure, includeElement = props.includeElement, init = props.init;
-        // let filepath = !output.filepath || path.isAbsolute(output.filepath) ? output.filepath : path.join(currDir, output.filepath);
+        var url = props.url, targetFile = props.targetFile, background = props.background, animation = props.animation, rootNode = props.rootNode, header = props.header, device = props.device, headless = props.headless, extraHTTPHeaders = props.extraHTTPHeaders, writePageStructure = props.writePageStructure, includeElement = props.includeElement, init = props.init;
         this.url = url;
-        this.filepath = !output.filepath || path.isAbsolute(output.filepath) ? output.filepath : path.join(currDir, output.filepath);
-        this.injectSelector = output.injectSelector || 'body';
+        this.filepath = targetFile;
+        // this.injectSelector = "app" || 'body';
         this.background = background || '#ecf0f2';
         this.animation = animation || '';
         this.rootNode = rootNode || '';
@@ -69,39 +77,23 @@ var DrawPageStructure = /** @class */ (function () {
         if (this.headless === undefined)
             this.headless = true;
         if (!url) {
-            Utils.log.error('please provide entry url !', 1);
+            console.log(chalk.red('please provide entry url !'));
         }
-        // if(!output.filepath) {
-        //   log.error('please provide output filepath !', 1); 
-        // }
         if (header && Utils.getAgrType(header) !== 'object') {
-            Utils.log.error('[header] should be an object !', 1);
-        }
-        if (this.filepath) {
-            if (!fsExtra.existsSync(this.filepath)) {
-                Utils.log.error('[output.filepath:404] please provide the output filepath !', 1);
-            }
-            else {
-                var fileStat = fsExtra.statSync(this.filepath);
-                if (fileStat.isDirectory()) {
-                    this.filepath = path.join(this.filepath, 'index.html');
-                    fsExtra.writeFileSync(this.filepath, default_html_1["default"]);
-                    this.filepath = this.filepath;
-                }
-            }
+            console.log(chalk.red('[header] should be an object !'));
         }
     }
     DrawPageStructure.prototype.generateSkeletonHTML = function (page) {
-        return __awaiter(this, void 0, void 0, function () {
-            var html, agrs, e_1;
+        return __awaiter(this, void 0, Promise, function () {
+            var html, genArgs, agrs, e_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        html = '';
+                        html = { css: '', html: {} };
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        agrs = Utils.genArgs.create({
+                        genArgs = {
                             init: {
                                 type: 'function',
                                 value: this.init.toString()
@@ -126,72 +118,104 @@ var DrawPageStructure = /** @class */ (function () {
                                 type: 'object',
                                 value: JSON.stringify(this.header)
                             }
-                        });
-                        agrs.unshift(eval_dom_1["default"]);
+                        };
+                        if (Utils.getAgrType(this.rootNode) === 'array') {
+                            genArgs.rootNode.value = JSON.stringify(this.rootNode);
+                            genArgs.rootNode.type = 'array';
+                        }
+                        agrs = Utils.genArgs.create(genArgs);
+                        agrs.unshift(eval_dom_1.default);
                         return [4 /*yield*/, page.evaluate.apply(page, agrs)];
                     case 2:
                         html = _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
                         e_1 = _a.sent();
-                        Utils.log.error('\n[page.evaluate] ' + e_1.message);
+                        console.log(chalk.red('\n[page.evaluate] ' + e_1.message));
                         return [3 /*break*/, 4];
-                    case 4: 
-                    // await page.screenshot({path: 'example.png'});
-                    // let base64 = fsExtra.readFileSync(path.resolve(currDir, '../example.png')).toString('base64');
-                    return [2 /*return*/, html];
+                    case 4:
+                        console.log(' ====> html', html);
+                        return [2 /*return*/, html];
                 }
             });
         });
     };
     DrawPageStructure.prototype.writeToFilepath = function (filepath, html) {
-        var fileHTML = fsExtra.readFileSync(filepath);
-        var $ = cheerio.load(fileHTML, {
-            decodeEntities: false
-        });
-        $(this.injectSelector).html(html);
-        fsExtra.writeFileSync(filepath, $.html('html'));
+        try {
+            var fileHTML = fsExtra.readFileSync(filepath + "/index.tsx", 'utf-8');
+            var start = fileHTML.indexOf('><') + 1;
+            var targetHtml = fileHTML.slice(0, start) + "\n" + html + fileHTML.slice(start);
+            // console.log(' ====> targetHtml', targetHtml)
+            fsExtra.writeFileSync(filepath + "/index.tsx", targetHtml);
+            console.log(chalk.green(" write html success"));
+        }
+        catch (error) {
+            console.log(chalk.red(" write html fail " + error));
+        }
+    };
+    DrawPageStructure.prototype.writeCss = function (filepath, css) {
+        var walkingPath = path.join(__dirname, "../../", 'walking/structure/index.module.less');
+        try {
+            var fileCss = fsExtra.readFileSync(walkingPath, 'utf-8');
+            fsExtra.writeFileSync(filepath + "/index.module.less", fileCss + css);
+            console.log(chalk.green(" write css success"));
+        }
+        catch (error) {
+            console.log(chalk.red(" write css fail"));
+        }
     };
     DrawPageStructure.prototype.start = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var pageUrl, spinner, pp, page, html, userWrite, defaultPage;
+            var pageUrl, spinner, pp, page, html, userWrite;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         pageUrl = this.url;
                         spinner = Utils.Spinner('magentaBright');
                         spinner.text = '启动浏览器...';
-                        return [4 /*yield*/, pp_1["default"]({
+                        return [4 /*yield*/, pp_1.default({
                                 device: this.device,
                                 headless: this.headless
                             })];
                     case 1:
                         pp = _a.sent();
-                        // console.log(' =======> pp', pp)
                         spinner.text = "\u6B63\u5728\u6253\u5F00\u9875\u9762\uFF1A" + pageUrl + "...";
                         return [4 /*yield*/, pp.openPage(pageUrl, this.extraHTTPHeaders)];
                     case 2:
                         page = _a.sent();
-                        // console.log(' ======> page', page.evaluate)
                         spinner.text = '正在生成骨架屏...';
                         return [4 /*yield*/, this.generateSkeletonHTML(page)];
                     case 3:
                         html = _a.sent();
                         userWrite = Utils.getAgrType(this.writePageStructure) === 'function';
                         if (userWrite) {
-                            this.writePageStructure(html, this.filepath);
+                            this.writePageStructure(html.html, this.filepath);
                         }
-                        if (this.filepath) {
-                            this.writeToFilepath(this.filepath, html);
-                        }
-                        if (!userWrite && !this.filepath) {
-                            defaultPage = path.join(currDir, 'index.html');
-                            fsExtra.writeFileSync(defaultPage, default_html_1["default"]);
-                            this.writeToFilepath(defaultPage, html);
-                            this.filepath = defaultPage;
-                            spinner.clear();
-                            Utils.log.warn("\nskeleton has created in a default page: " + defaultPage);
-                        }
+                        // console.log(' ====> ', JSON.stringify(Object.keys(html.html)))
+                        // console.log(' ====> ', this.filepath)
+                        Object.keys(html.html).forEach(function (item) {
+                            var _item = item.replace("#", "");
+                            /** 把默认文件copy指定目录 */
+                            var walkingPath = path.join(__dirname, "../../", 'walking/structure');
+                            try {
+                                var _targetFile = _this.filepath + "/" + _item;
+                                if (!fsExtra.existsSync(_targetFile)) {
+                                    console.log(chalk.yellow(" target file path:404 [" + _targetFile + "]"));
+                                    console.log(chalk.green(" target file path create ..."));
+                                    fsExtra.ensureDirSync(_targetFile);
+                                    console.log(chalk.green(" target file path create success"));
+                                }
+                                console.log(chalk.green(" copy file start"));
+                                fsExtra.copySync(walkingPath + "/", _targetFile);
+                                console.log(chalk.green(" copy file start success"));
+                                _this.writeToFilepath(_targetFile, html.html[item]);
+                                _this.writeCss(_targetFile, html.css);
+                            }
+                            catch (error) {
+                                console.log(chalk.red("copy walking structure err " + error));
+                            }
+                        });
                         spinner.clear().succeed("skeleton screen has created and output to " + Utils.calcText(this.filepath));
                         if (!this.headless) return [3 /*break*/, 5];
                         return [4 /*yield*/, pp.browser.close()];
@@ -207,15 +231,34 @@ var DrawPageStructure = /** @class */ (function () {
     return DrawPageStructure;
 }());
 function getDpsconfig() {
-    var dpsConfFile = resolveCwd(default_config_1["default"].filename);
+    var dpsConfFile = resolveDir(DefConf.filename);
+    console.log(' =====> ', dpsConfFile);
     if (!fsExtra.existsSync(dpsConfFile)) {
-        return Utils.log.error("please run 'dps init' to initialize a config file", 1);
+        return console.log(chalk.red("please run 'dps init' to initialize a config file"));
     }
     return require(dpsConfFile);
 }
 function DpsStatr() {
     var dpsConfig = getDpsconfig();
-    console.log(' ======> dpsConfig', dpsConfig);
+    console.log(chalk.green(" dps defalut config"), dpsConfig);
+    var targetFile = resolveCwd('components/skeleton');
+    try {
+        if (!fsExtra.existsSync(targetFile)) {
+            console.log(chalk.yellow(" target file path:404 [" + targetFile + "]"));
+            console.log(chalk.green(" target file path create ..."));
+            fsExtra.ensureDirSync(targetFile);
+            console.log(chalk.green(" target file path create success"));
+        }
+        if (!fsExtra.statSync(targetFile).isDirectory()) {
+            console.log(chalk.red(" target file path exist and not directory"));
+            return;
+        }
+    }
+    catch (error) {
+        console.log(chalk.red(" target file path create fail [" + error + "]"));
+    }
+    console.log(chalk.green(" target file path [" + targetFile + "]"));
+    dpsConfig.targetFile = targetFile;
     new DrawPageStructure(dpsConfig).start();
 }
-exports["default"] = DpsStatr;
+exports.default = DpsStatr;

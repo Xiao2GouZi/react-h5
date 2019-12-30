@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var chalk = require("chalk");
 var path = require("path");
 var fsExtra = require('fs-extra');
@@ -118,7 +118,7 @@ function buildNginx(cwd) {
 }
 /** init nginx project */
 function initCondition() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var projectName, promptInput, promptRes, files, promptList, promptS, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -130,7 +130,7 @@ function initCondition() {
                     promptInput = [{
                             type: 'input',
                             name: 'name',
-                            message: 'please init nginx project name'
+                            message: 'please init nginx project name',
                         }];
                     return [4 /*yield*/, inquirer.prompt(promptInput)];
                 case 2:
@@ -167,7 +167,7 @@ function initCondition() {
 }
 /** select existing project */
 function selectCondition() {
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(this, void 0, Promise, function () {
         var files, promptSelectP, setProjectRes, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -192,4 +192,4 @@ function selectCondition() {
         });
     });
 }
-exports["default"] = buildNginx;
+exports.default = buildNginx;
