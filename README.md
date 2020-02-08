@@ -1,12 +1,12 @@
 
- # wepack
+ ## wepack
 
     less,
     修改postcss配置文件
     <!-- antd-mobile -->
 
 
-# 全局属性注入  .env cross-env
+## 全局属性注入  .env cross-env
    ### .env
    [添加](https://github.com/Xiao2GouZi/react-h5/blob/master/.env) 
    ```
@@ -35,30 +35,30 @@
    ```
 
 
-# UI组件 antd-mobile
+## UI组件 antd-mobile
 
 全局样式配置: [config/antd-mobile-theme.js](https://github.com/Xiao2GouZi/react-h5/blob/master/config/antd-mobile-theme.js)
 
-# 开发辅助工具
-   [qrcode 扫码直接看效果](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/qrcode.js)
+## 开发辅助工具(RY系列)
+
+   ### 开发前准备
+   * npm link 接下来的ry生效
+   * npm run watch:bin2 通过gulp将ry中的TS代码编译成js
+   * npm run build:nginx 时本地需要启动Nginx   sudo nginx / sudo nginx -s reload
+
+
+   [qrcode 扫码直接看效果](https://github.com/Xiao2GouZi/react-h5/blob/master/ry/commanders/qrcode.ts)
     
-    npm run qrcode
-   * normal  
-      默认路由: http://192.168.0.1:3000
-   * custom 
-      自定义路由: http://192.168.0.1:3000/XXX
+    ry qrcode
+   * normal   (XXX -> 电脑ip)  
+       默认路由: http://XXX:3000
+   * custom  
+      自定义路由: http://XXX:3000/XXX
 
-   [copy](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/copy.js)
 
-    npm run copy
-
-   [zip](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/zip.js)   
-
-    npm run zip
-
-   [build-nginx](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/build-nginx.js)
+   [build-nginx](https://github.com/Xiao2GouZi/react-h5/blob/master/ry/commanders/build-nginx.ts)
     
-   前提本地安装了nginx, 并且nginx.congf配置  
+   前提本地安装了nginx, 并且配置nginx.congf配置  
 
     我的配置
     server {
@@ -71,18 +71,49 @@
         }
     }
 
-    npm run build:nginx
+    创建新的 nginx project (对应的nginx需要配置server)
+    ry build:nginx -i
+  
+    选择已有的 nginx project
+    ry build:nginx -s
 
 
+   [自动生成骨架屏](https://github.com/Xiao2GouZi/react-h5/tree/master/ry/commanders/draw-page-structure)  
+   
 
-# mock
+    创建生成骨架屏的config配置文件   支持单页面以及部分组件
+    ry dps:init
+    cd到指定的目录下执行下面命令
+    ry dps:start
+
+   [创建模板](https://github.com/Xiao2GouZi/react-h5/blob/master/ry/commanders/template.ts) 
+
+    创建page 模板页面 order page ...
+    create page
+    ry tpl -p
+
+    创建模板组件
+    create component 
+    ry tpl -c
+
+
+   [copy](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/copy.js)
+
+    npm run copy
+
+   [zip](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/zip.js)   
+
+    npm run zip
+
+
+## mock
    [使用参考](https://github.com/Xiao2GouZi/react-h5/blob/master/mock/README.md)
 
-# iconfont
+## iconfont
    [使用参考](https://github.com/Xiao2GouZi/react-h5/blob/master/iconfont/README.md)   
 
 
-# 屏幕适配 (viewport)
+## 屏幕适配 (viewport)
    采用 px -> vw, vh, vmax, vmin
 
    配置连接: [config/postcss.config.js](https://github.com/Xiao2GouZi/react-h5/blob/master/config/postcss.config.js)   
@@ -90,7 +121,7 @@
    对vw, vh, vmax, vmin 支持设置: [kits/load-script.ts](https://github.com/Xiao2GouZi/react-h5/blob/master/src/kits/load-script.ts)
 
 
-# React.Lazy
+## React.Lazy
 
    ```
    import { LazyComponent } from '@components'
@@ -110,7 +141,7 @@
    ```
 
 
-# Redux
+## Redux
    [redux]()  
    [react-redux]()    
    [redux-logger]()  

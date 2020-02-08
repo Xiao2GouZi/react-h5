@@ -6,7 +6,6 @@
     "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
     "start:demo": "cross-env REACT_APP_ENTRY=index-demo  nodemon scripts/start.js",
     "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index node scripts/build.js",
-    "build:nginx": "node scripts/build-nginx.js",
     "iconfont": "nodemon iconfont/index.js",
     "mock": "nodemon mock/index.js",
     "test": "node scripts/test.js",

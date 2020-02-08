@@ -4,7 +4,7 @@
 interface IConfig {
 	/** 待生成骨架屏的页面地址 */
 	url: string,
-	/** 针对局部生成骨架屏	document.body */
+	/** 针对局部生成骨架屏 默认	document.body */
 	rootNode: string | string[],
 	/** 骨架屏主题色 #ecf0f2 */
 	background?: string,
