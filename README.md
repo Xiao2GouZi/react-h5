@@ -102,7 +102,6 @@
     npm run copy
 
    [zip](https://github.com/Xiao2GouZi/react-h5/blob/master/scripts/zip.js)   
-
     npm run zip
 
 
