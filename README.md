@@ -78,7 +78,7 @@
     ry build:nginx -s
 
 
-   [自动生成骨架屏](https://github.com/Xiao2GouZi/react-h5/tree/master/ry/commanders/draw-page-structure)  
+   [自动生成骨架屏](https://github.com/Xiao2GouZi/react-h5/tree/master/ry/commanders/draw-page-structure)  (doing)
    
 
     创建生成骨架屏的config配置文件   支持单页面以及部分组件
@@ -86,7 +86,7 @@
     cd到指定的目录下执行下面命令
     ry dps:start
 
-   [创建模板](https://github.com/Xiao2GouZi/react-h5/blob/master/ry/commanders/template.ts) 
+   [创建模板](https://github.com/Xiao2GouZi/react-h5/blob/master/ry/commanders/template.ts)  (doing)
 
     创建page 模板页面 order page ...
     create page
@@ -155,4 +155,14 @@
    ### redux demo [src/app-demo/redxu-demo/](https://github.com/Xiao2GouZi/react-h5/tree/master/src/app-demo/redux-demo)
 
    
-  
+
+
+
+# TODO
+   0. 优化完善Redux封装, 创建模板, 自动生成骨架屏
+   1. Eslint  prettier
+   2. pre commit hook
+   3. build 多用途包
+   4. 深度 webpack 
+   5. h5路由缓存
+   6. 自动化测试
