@@ -1,4 +1,5 @@
 
+
 /**
  * object 拼接到url后
  */
@@ -88,4 +89,13 @@ export const dataType = (data: any): EDataType => {
     const type = stringPro.split(' ')[1];
     return type.slice(0, type.length - 1) as EDataType
 };
+
+
+
+
+
+
+
+
+
 

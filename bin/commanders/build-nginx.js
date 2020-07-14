@@ -42,17 +42,23 @@ var path = require("path");
 var fsExtra = require('fs-extra');
 var inquirer = require('inquirer');
 var _ = require('loadsh');
+var os = require('os');
+var homedir = os.homedir();
 var resolve = function (dir) { return path.join(__dirname, "../../", dir); };
 // 项目中build路径
 var buildPath = resolve("build/");
 // nginx config配置的路径
-var nginxPath = '/Users/bank/Desktop/nginx/';
+var nginxPath = homedir + "/Desktop/nginx/";
 function buildNginx(cwd) {
     return __awaiter(this, void 0, void 0, function () {
         var _projectName, _a, success, projectName, _b, success, projectName;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
+                    /** 桌面没有, 直接创建 */
+                    if (!fsExtra.existsSync(nginxPath)) {
+                        fsExtra.mkdirpSync(nginxPath);
+                    }
                     _projectName = '';
                     if (!cwd.init) return [3 /*break*/, 2];
                     return [4 /*yield*/, initCondition()];
@@ -63,7 +69,7 @@ function buildNginx(cwd) {
                         return [2 /*return*/];
                     }
                     console.log(chalk.green('nginx project name', projectName));
-                    _projectName = nginxPath + projectName;
+                    _projectName = "" + nginxPath + projectName;
                     return [3 /*break*/, 5];
                 case 2:
                     if (!cwd.select) return [3 /*break*/, 4];
@@ -74,7 +80,7 @@ function buildNginx(cwd) {
                         console.log(chalk.red('set nginx project err'));
                         return [2 /*return*/];
                     }
-                    _projectName = nginxPath + projectName;
+                    _projectName = "" + nginxPath + projectName;
                     return [3 /*break*/, 5];
                 case 4:
                     _projectName = nginxPath + 'demo';

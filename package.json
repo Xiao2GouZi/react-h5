@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "cross-env REACT_APP_ENTRY=index  nodemon scripts/start.js",
-    "start:demo": "cross-env REACT_APP_ENTRY=index-demo  nodemon scripts/start.js",
-    "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index node scripts/build.js",
+    "start": "cross-env REACT_APP_ENTRY=index  node scripts/start.js",
+    "start:demo": "cross-env REACT_APP_ENTRY=index-demo  node scripts/start.js",
+    "build": "rm -rf build/ && cross-env REACT_APP_ENTRY=index-demo node scripts/build.js",
     "iconfont": "nodemon iconfont/index.js",
     "mock": "nodemon mock/index.js",
     "test": "node scripts/test.js",
@@ -13,7 +13,9 @@
     "copy": "node scripts/copy.js source=dist output=code",
     "zip": "node scripts/zip.js source=build output=build-zip",
     "watch:bin": "tsc --baseUrl ./ry/** --outDir ./bin -w",
-    "watch:bin2": "node scripts/watch-bin.js"
+    "watch:bin2": "node scripts/watch-bin.js",
+    "start:analyzer": "concurrently \"cross-env BUNDLE_ANALYZ_EVN=dev node scripts/analyzer.js\" \"rm -rf dist/ && cross-env BUNDLE_ANALYZ=true npm run start:demo\"",
+    "build:analyzer": "cross-env BUNDLE_ANALYZ=true BUNDLE_ANALYZ_EVN=build npm run build && node scripts/analyzer.js"
   },
   "bin": {
     "ry": "bin/index.js"
@@ -27,7 +29,6 @@
     "antd-mobile": "^2.3.1",
     "babel-eslint": "10.0.2",
     "babel-jest": "^24.8.0",
-    "babel-loader": "8.0.6",
     "babel-plugin-named-asset-import": "^0.3.3",
     "babel-preset-react-app": "^9.0.1",
     "camelcase": "^5.2.0",
@@ -57,6 +58,7 @@
     "jest-watch-typeahead": "0.3.1",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
+    "lodash": "^4.17.15",
     "mini-css-extract-plugin": "0.5.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.5.0",
@@ -66,10 +68,10 @@
     "postcss-preset-env": "6.7.0",
     "postcss-px-to-viewport": "^1.1.1",
     "postcss-safe-parser": "4.0.1",
-    "react": "^16.9.0",
+    "react": "^16.13.1",
     "react-app-polyfill": "^1.0.2",
     "react-dev-utils": "^9.0.3",
-    "react-dom": "^16.9.0",
+    "react-dom": "^16.13.1",
     "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
@@ -82,9 +84,10 @@
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "1.4.1",
     "ts-pnp": "1.1.2",
-    "typescript": "^3.6.3",
+    "typescript": "^3.9.6",
     "url-loader": "2.1.0",
-    "webpack": "4.39.1",
+    "webpack": "^4.39.1",
+    "webpack-bundle-analyzer": "^3.7.0",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "4.3.1"
@@ -103,6 +106,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "jest": {
     "roots": [
@@ -153,8 +160,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/preset-env": "^7.9.5",
     "@types/classnames": "^2.2.9",
     "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.150",
     "@types/node": "^12.7.5",
     "@types/reach__router": "^1.2.5",
     "@types/react": "^16.9.2",
@@ -162,13 +172,18 @@
     "@types/react-redux": "^7.1.4",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-logger": "^3.0.7",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.1.0",
     "babel-plugin-import": "^1.12.1",
+    "babel-plugin-lodash": "^3.3.4",
+    "babel-preset-env": "^1.7.0",
     "chalk": "^3.0.0",
     "cheerio": "^1.0.0-rc.3",
     "child_process": "^1.0.2",
     "chokidar": "^3.3.1",
     "commander": "^4.0.1",
     "compressing": "^1.4.0",
+    "concurrently": "^5.2.0",
     "cssnano": "^4.1.10",
     "cssnano-preset-advanced": "^4.0.7",
     "fast-install-puppeteer": "^1.0.5",
@@ -178,8 +193,10 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "inquirer": "^7.0.0",
     "loadsh": "0.0.4",
+    "lodash-webpack-plugin": "^0.11.5",
     "mockjs": "^1.0.1-beta3",
     "node-emoji": "^1.10.0",
+    "node-watch": "^0.6.4",
     "nodemon": "^1.19.2",
     "ora": "^4.0.3",
     "postcss-viewport-units": "^0.1.6",
@@ -189,10 +206,12 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "run-in-terminal": "0.0.3",
     "shelljs": "^0.8.3",
+    "typescript-plugin-css-modules": "^2.2.0",
+    "util": "^0.12.3",
     "vconsole": "^3.3.4",
     "viewport-units-buggyfill": "^0.6.2",
-    "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.10"
   }
 }

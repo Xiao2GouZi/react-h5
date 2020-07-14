@@ -18,7 +18,7 @@ commander.command('tpl')
     .option('-c, --component', 'init component')
     .action(index_1.Template);
 /**
- * build nginx]
+ * build nginx
  *
  * 创建demo project
  * ry build:nginx
@@ -42,11 +42,16 @@ commander.command('build:nginx')
  * */
 commander.command('qrcode')
     .action(index_1.Qrcode);
-/**  */
+/**
+ * 创建 自动生成骨架屏 config.js文件
+ * */
 commander
     .command('dps:init')
     .description('create a default dps.config.js file')
     .action(index_1.DpsInit);
+/**
+ * 创建骨架屏
+ */
 commander
     .command('dps:start')
     .description('start create a skeleton screen')

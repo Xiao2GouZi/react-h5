@@ -5,18 +5,23 @@ const path = require("path");
 const fsExtra = require('fs-extra')
 const inquirer = require('inquirer');
 const _ = require('loadsh')
+const os = require('os');
 
+const homedir = os.homedir();
 
 const resolve = dir => path.join(__dirname, "../../", dir);
-
 
 // 项目中build路径
 const buildPath = resolve(`build/`)
 // nginx config配置的路径
-const nginxPath = '/Users/bank/Desktop/nginx/'
+const nginxPath = `${homedir}/Desktop/nginx/`
 
 
 async function buildNginx(cwd) {
+    /** 桌面没有, 直接创建 */
+    if (!fsExtra.existsSync(nginxPath)) {
+        fsExtra.mkdirpSync(nginxPath)
+    }
     let _projectName = ''
     if (cwd.init) {
         const { success, projectName } = await initCondition()
@@ -25,14 +30,14 @@ async function buildNginx(cwd) {
             return
         }
         console.log(chalk.green('nginx project name', projectName))
-        _projectName = nginxPath + projectName
+        _projectName = `${nginxPath}${projectName}`
     } else if (cwd.select) {
         const { success, projectName } = await selectCondition()
         if (!success) {
             console.log(chalk.red('set nginx project err'))
             return
         }
-        _projectName = nginxPath + projectName
+        _projectName = `${nginxPath}${projectName}`
     } else {
         _projectName = nginxPath + 'demo'
     }
