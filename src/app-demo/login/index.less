@@ -2,3 +2,35 @@
   text-align: center;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+.middle,
+.left,
+.right {
+  position: relative;
+  float: left;
+  min-height: 130px;
+}
+.container {
+  padding: 0 220px 0 200px;
+  overflow: hidden;
+}
+.left {
+  margin-left: -100%;
+  left: -200px;
+  width: 200px;
+  background: red;
+}
+.right {
+  margin-left: -220px;
+  right: -220px;
+  width: 220px;
+  background: green;
+}
+.middle {
+  width: 100%;
+  background: blue;
+  word-break: break-all;
+}

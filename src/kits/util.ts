@@ -27,7 +27,9 @@ export const urlObject = (url: string) => {
     return res;
 };
 
-/** async await 包装try->catch */
+/** 
+ * async await 包装try->catch 
+ * */
 export async function errCaptured<T = any>(asyncFunc: any): Promise<{ res: T, err: any }> {
     try {
         let res = await asyncFunc()
@@ -68,7 +70,7 @@ export enum EDataType {
 }
 
 /**
- *  数据类型
+ *  判断数据类型
  *
  *  ''        ---->   String
  *  {}        ---->   Object
@@ -88,4 +90,47 @@ export const dataType = (data: any): EDataType => {
     const type = stringPro.split(' ')[1];
     return type.slice(0, type.length - 1) as EDataType
 };
+
+
+
+/**
+ *  数组扁平化1
+ * @param arr   数组
+ * @param deep  平铺成深度 2, 二维数组
+ * example Util.arrFlatten1([0, 1, [2, [3, 4, {a: 1}]]], 2)
+ */
+export const arrFlatten1 = (arr: any[], deep = 1): any[] => {
+    if (dataType(arr) !== EDataType.Array) return []
+    return arr.reduce((cur, next) => {
+        return dataType(next) === EDataType.Array && deep > 1 ?
+            [...cur, ...arrFlatten1(next, deep - 1)] :
+            [...cur, next]
+    }, [])
+}
+
+
+/**
+ *  数组扁平化2 简单数组 [1, 2, [3], [4, [5]]]
+ * @param arr   数组
+ * @param deep  平铺成深度 2, 二维数组
+ * example   Util.arrFlatten2([0, 1, [2, [3, 4]]])
+ */
+export const arrFlatten2 = (arr: any[]): any[] => {
+    if (dataType(arr) !== EDataType.Array) return []
+    return arr.toString().split(',').map(item => +item)
+}
+
+/**
+ *  数组去重
+ * @param arr  数组
+ * @param key  根据object里的指定参数   数组的元素不是对象,key不用传 
+ *  example Util.arrUniq(singers), Util.arrUniq(singers, "id")
+ */
+export const arrUniq = (arr: any[], key: string = '') => {
+    if (key) {
+        return [...(new Map(arr.map(item => [item[key], item])).values() as any)]
+    }
+    return [...(new Map(arr.map(item => [item, item])).values() as any)]
+}
+
 
