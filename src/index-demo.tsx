@@ -15,6 +15,8 @@ console.log(' -----> __DEV__', __DEV__)
 console.log(' -----> VERSION', VERSION)
 console.log(process.env)
 
+
+
 ReactDOM.render(
     <Provider store={Store()}>
         <Routes />

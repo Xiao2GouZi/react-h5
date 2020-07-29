@@ -24,14 +24,23 @@ const modules = require('./modules');
 const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 const eslint = require('eslint');
 
+
+
 const postcssNormalize = require('postcss-normalize');
+
+
 
 const appPackageJson = require(paths.appPackageJson);
 
 const antdMobileTheme = require('./antd-mobile-theme')
+const lodashWebpackPluginConfig = require('./lodash-webpack-plugin.config')
+const webpackBundleAnalyzerConfig = require('./webpack-bundle-analyzer.config')
 
 
 
@@ -105,7 +114,7 @@ module.exports = function (webpackEnv) {
           ident: 'postcss',
 
           config: {    // postcss 设置移到postcss.config.js  配置
-            path: 'config/postcss.config.js'  
+            path: 'config/postcss.config.js'
           },
 
           // plugins: () => [
@@ -304,6 +313,7 @@ module.exports = function (webpackEnv) {
         .map(ext => `.${ext}`)
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
+        react: path.resolve('./node_modules/react'),
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
@@ -658,7 +668,7 @@ module.exports = function (webpackEnv) {
         clientsClaim: true,
         exclude: [/\.map$/, /asset-manifest\.json$/],
         importWorkboxFrom: 'cdn',
-        navigateFallback: publicUrl + '/index.html',
+        navigateFallback: `${publicUrl}/index.html`,
         navigateFallbackBlacklist: [
           // Exclude URLs starting with /_, as they're likely an API call
           new RegExp('^/_'),
@@ -697,7 +707,8 @@ module.exports = function (webpackEnv) {
         // The formatter is invoked directly in WebpackDevServerUtils during development
         formatter: isEnvProduction ? typescriptFormatter : undefined,
       }),
-
+      new LodashModuleReplacementPlugin(lodashWebpackPluginConfig),
+      process.env.BUNDLE_ANALYZ === 'true' && new BundleAnalyzerPlugin(webpackBundleAnalyzerConfig)
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell Webpack to provide empty mocks for them so importing them works.

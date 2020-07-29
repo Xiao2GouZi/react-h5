@@ -2,9 +2,17 @@
 
 import Msg from './msg'
 import * as Util from './util'
+import * as WindowSize from './window-size'
 import * as DeviceInfo from './device-info'
 import * as CheckInfo from './check-info'
 import LoadScript from './load-script'
+import * as ScrollMiddle from './scroll-middle'
+import * as NetworkStatus from './network-status'
+import * as WindowScrollPosition from './window-scroll-position'
+import * as OnlineStatus from './online-status'
+import * as ComponentSize from './component-size'
+import * as InputValue from './input-value'
+import * as ImmerHook from './immer-hooks'
 
 
 export {
@@ -12,5 +20,13 @@ export {
     Util,
     DeviceInfo,
     CheckInfo,
-    LoadScript
+    LoadScript,
+    WindowSize,
+    ScrollMiddle,
+    NetworkStatus,
+    WindowScrollPosition,
+    OnlineStatus,
+    ComponentSize,
+    InputValue,
+    ImmerHook
 }
