@@ -27,6 +27,10 @@ export interface IOption {
     throttle: number
 }
 
+/**
+ * 
+ * @param options 
+ */
 export function useWindowScrollPosition(options?: IOption): { x: number, y: number } {
     let opts = Object.assign({}, defaultOptions, options)
 

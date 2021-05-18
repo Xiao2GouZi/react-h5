@@ -8,7 +8,23 @@ export interface IWindowInfo {
     outerWidth: number
 }
 
-/** 监听页面尺寸大小变化 */
+/** 
+ * 
+ * 监听页面尺寸大小变化
+ * 
+ * import React, { memo } from 'react'
+ * import { WindowSize } from '@kits'
+ * interface IProps { }
+ * const Index: React.FC = (props: IProps) => {
+ *  const size = WindowSize.useWindowSize()
+ *  console.log(' =====> size', size)
+ *  return <React.Fragment>
+ *     <div>1231231231231231</div>
+ *  </React.Fragment>
+ * }
+ * export default memo(Index)
+ *  
+ * */
 export function useWindowSize(): IWindowInfo {
     function getSize() {
         return {

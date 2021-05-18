@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState, useReducer, useContext } from 'react';
 import { RouteComponentProps } from '@reach/router'
 import _ from 'lodash'
-import { WindowScrollPosition, NetworkStatus } from '@kits'
+import { ComponentLifeCycle } from '@kits'
 
 import style from './index.module.less';
 import HederInfo from './components/header'
 import InputInfo from './components/input-info'
 import AllAction from './components/all-action'
+import TestHooks from './components/test-hooks'
 
 interface IProps extends RouteComponentProps {
 
@@ -15,21 +16,8 @@ interface IProps extends RouteComponentProps {
 export default class Login extends React.PureComponent<IProps, any> {
 
   componentDidMount() {
-
-    // const position = WindowScrollPosition.useWindowScrollPosition()
-    // console.log(' ====> position', position)
-
-    const networkStatus =  NetworkStatus.useNetworkStatus()
-
-    console.log(' ====> networkStatus', networkStatus)
     
-
-    const a = { "a": 1 }
-
-    console.log(' =====> login componentDidMount', _.cloneWith(a))
-
   }
-
 
   render() {
     return (
@@ -37,13 +25,12 @@ export default class Login extends React.PureComponent<IProps, any> {
         <HederInfo />
         <InputInfo />
         <AllAction />
+        <TestHooks />
         <div className='container'>
           <div className='middle'></div>
           <div className='left'></div>
           <div className='right'></div>
         </div>
-
-
       </div>
     )
   }

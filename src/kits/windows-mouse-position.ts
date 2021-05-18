@@ -1,10 +1,27 @@
 import { useState, useEffect } from 'react'
+import { throttle } from 'lodash'
 
 interface IWindowMousePositionRes {
     x: number,
     y: number
 }
 
+/**
+ * 监听鼠标位置 PC 端
+ * 
+ * import React, { memo } from 'react'
+ * import { WindowsMousePosition } from '@kits'
+ * interface IProps { }
+ * const Index: React.FC = (props: IProps) => {
+ *  const position = WindowsMousePosition.useWindowMousePosition()
+ *  console.log(' =====> position', position)
+ *  return <React.Fragment>
+ *      <div>1231231231231231</div>
+ *  </React.Fragment>
+ * }
+ * export default memo(Index)
+ * 
+ */
 export function useWindowMousePosition(): IWindowMousePositionRes {
     let [WindowMousePosition, setWindowMousePosition] = useState({
         x: 0,
@@ -18,8 +35,10 @@ export function useWindowMousePosition(): IWindowMousePositionRes {
         });
     }
     useEffect(() => {
-        window.addEventListener("mousemove", handleMouseMove);
+        const mouseMove = throttle(handleMouseMove, 300)
+        window.addEventListener("mousemove", mouseMove);
         return () => {
+            mouseMove.cancel()
             window.removeEventListener("mousemove", handleMouseMove);
         };
     }, []);
@@ -27,15 +46,3 @@ export function useWindowMousePosition(): IWindowMousePositionRes {
     return WindowMousePosition;
 }
 
-/**
- *
- * function MyComponent() {
- *  let { x, y } = useWindowMousePosition();
- *  return (
- *      <div style={{ width: "100%", height: "100%" }}>
- *          <pre>{JSON.stringify({ x, y })}</pre>
- *      </div>
- *  );
- * }
- *
- */

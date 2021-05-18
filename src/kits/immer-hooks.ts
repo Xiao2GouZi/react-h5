@@ -1,7 +1,7 @@
 import { useState, useReducer } from 'react'
 import produce, { Draft } from 'immer'
 
-export function useImmerState<Base>(initialState: Base): [Base, (trick: (draft: Draft<Base>) => void) => void] {
+export function useImmerState<Base>(initialState: Base | (() => Base)): [Base, (trick: (draft: Draft<Base>) => void) => void] {
     const [state, setState] = useState<Base>(initialState)
     const setImmerState = (trick: (draft: Draft<Base>) => void) => {
         setState(pre => {

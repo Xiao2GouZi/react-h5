@@ -16,11 +16,30 @@ interface IUseInputValue {
 /**
  * 监听input输入框变化
  * @param param 
+ * import React, { memo } from 'react' 
+ * import { InputItem } from 'antd-mobile' 
+ * import { InputValue } from '@kits' 
+ * 
+ * interface IProps { }
+ * const Index: React.FC = (props: IProps) => {
+ *  const inputProps = InputValue.useInputValue({
+ *  initialValue: '123',
+ *  pretreatment: (value: string) => {
+ *      // 预处理
+ *      return value
+ *  }
+ * })
+ *  return <React.Fragment>
+ *  <InputItem {...inputProps} />
+ *  </React.Fragment>
+ * }
+ * export default memo(Index) 
+ * 
  */
 export function useInputValue(param: IUseInputValueParam): IUseInputValue {
     let [value, setValue] = useState(param.initialValue);
     let onChange = useCallback(function (event) {
-        const value = param.pretreatment(event.currentTarget.value)
+        const value = param.pretreatment(event)
         setValue(value);
     }, []);
     return {
@@ -28,16 +47,3 @@ export function useInputValue(param: IUseInputValueParam): IUseInputValue {
         onChange,
     };
 }
-
-
-/**
- *  usage
- * 
- * import useInputValue from '@rehooks/input-value';
- * function MyComponent() {
- *  let name = useInputValue('Jamie');
- *  // name = { value: 'Jamie', onChange: [Function] }
- * return <input {...name}/>;
- * }
- * 
- */

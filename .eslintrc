@@ -9,10 +9,13 @@
         "project": "./tsconfig.json"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "react-hooks"
     ],
     "rules": {
-        "@typescript-eslint/restrict-plus-operands": "error"
+        "@typescript-eslint/restrict-plus-operands": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
         //这里就调用了@typescript-eslint/eslint-plugin的rule配置，更多配置可以去github上查文档
     },
     "extends": [

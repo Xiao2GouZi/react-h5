@@ -13,7 +13,9 @@ import * as OnlineStatus from './online-status'
 import * as ComponentSize from './component-size'
 import * as InputValue from './input-value'
 import * as ImmerHook from './immer-hooks'
-
+import * as ComponentLifeCycle from './component-life-cycle'
+import * as DocumentVisibility from './document-visibility'
+import * as WindowsMousePosition from './windows-mouse-position'
 
 export {
     Msg,
@@ -25,8 +27,11 @@ export {
     ScrollMiddle,
     NetworkStatus,
     WindowScrollPosition,
+    WindowsMousePosition,
     OnlineStatus,
     ComponentSize,
     InputValue,
-    ImmerHook
+    ImmerHook,
+    ComponentLifeCycle,
+    DocumentVisibility
 }
